@@ -5,3 +5,8 @@ venv/
 .vscode/
 .idea/
 .DS_Store
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal
+.ipynb_checkpoints/
