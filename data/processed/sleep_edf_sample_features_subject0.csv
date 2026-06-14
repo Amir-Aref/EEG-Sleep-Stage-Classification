@@ -1,0 +1,8 @@
+sleep_stage,eeg_mean,eeg_std
+Wake,0.5,0.1
+N1,0.6,0.2
+N2,0.4,0.15
+N3,0.8,0.3
+REM,0.55,0.12
+Unknown,0.0,0.0
+Wake,,0.1
