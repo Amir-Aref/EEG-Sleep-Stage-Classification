@@ -1,8 +1,18 @@
 __pycache__/
 *.pyc
 venv/
+.venv/
 .env
 .vscode/
 .idea/
 .DS_Store
-.venv/
+
+# Database-related ignores
+db-data/
+db-shm
+db-wal
+sqlite-db/
+sqlite-wal
+
+# Notebooks
+ipynb_checkpoints/
