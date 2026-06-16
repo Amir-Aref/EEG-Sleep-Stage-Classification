@@ -53,3 +53,17 @@ Label Encoding: Sleep stages are converted from text to integers (Wake -> 0, N1 
 
 CI/CD Automation
 This project uses GitHub Actions for Continuous Integration . The workflow is configured to run automatically on every push and pull request to the main branch, ensuring the data pipeline executes reliably without errors .
+
+
+Optional Docker
+This project is fully Dockerized to ensure a consistent and reproducible environment without any local dependency issues.
+
+To build the Docker image, run the following command in the root directory:
+docker build -t eeg-sleep-pipeline
+
+After the image is successfully built, you can run the entire pipeline inside the container using:
+docker run --rm eeg-sleep-pipeline
+
+Note: On Linux or WSL environments, you may need to run these commands with administrator privileges by adding "sudo" at the beginning (e.g., sudo docker build ...).
+
+The outputs and successful execution screenshots of the Docker build and run processes are saved in the docs/screenshots/ directory.
