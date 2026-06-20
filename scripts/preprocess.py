@@ -1,75 +1,84 @@
-
-import os
 import logging
 import pandas as pd
+from pathlib import Path
+from typing import List
+from database_connection import get_connection
 
-INPUT_PATH = os.path.join("data", "sample", "sleep_edf_sample_features_subject0.csv")
-OUTPUT_PATH = os.path.join("outputs", "preprocessed_intermediate.csv")
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_PATH = PROJECT_ROOT / "outputs" / "preprocessed_features.csv"
 
 VALID_STAGES = {"Wake", "N1", "N2", "N3", "REM"}
+POWER_COLUMNS = ["signal_energy", "delta_power", "theta_power", "alpha_power", "beta_power"]
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - [%(levelname)s] - %(message)s"
-)
+def load_data_from_db() -> pd.DataFrame:
+    try:
+        with get_connection() as conn:
+            df = pd.read_sql_query("SELECT * FROM eeg_epochs", conn)
+        logger.info(f"Loaded dataframe from database. Shape: {df.shape}")
+        return df
+    except Exception as e:
+        logger.error(f"Failed to load data from database: {e}")
+        raise
 
-def load_data(path):
-    logging.info(f"Loading data from {os.path.abspath(path)}")
-    df = pd.read_csv(path)
-    logging.info(f"Loaded dataframe shape: {df.shape}")
-    return df
-
-
-def validate_sleep_stage(df):
+def validate_sleep_stage(df: pd.DataFrame) -> pd.DataFrame:
     if "sleep_stage" not in df.columns:
         raise ValueError("Column 'sleep_stage' not found in dataset")
 
-    before = len(df)
+    initial_len = len(df)
     df = df[df["sleep_stage"].isin(VALID_STAGES)]
-    dropped = before - len(df)
+    dropped = initial_len - len(df)
 
     if dropped > 0:
-        logging.warning(f"Dropped {dropped} rows with invalid sleep_stage labels")
+        logger.warning(f"Dropped {dropped} rows with invalid sleep_stage labels")
 
     return df
 
+def remove_physical_anomalies(df: pd.DataFrame, cols: List[str]) -> pd.DataFrame:
+    initial_len = len(df)
+    
+    for col in cols:
+        if col in df.columns:
+            df = df[df[col] >= 0]
+            
+    dropped = initial_len - len(df)
+    if dropped > 0:
+        logger.warning(f"Dropped {dropped} rows with negative physical values (e.g., power/energy)")
+        
+    return df
 
-def clean_dataframe(df):
-
-    before = len(df)
+def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    initial_len = len(df)
 
     df = df.drop_duplicates()
     df = df.dropna()
+    df = remove_physical_anomalies(df, POWER_COLUMNS)
 
-    after = len(df)
-
-    logging.info(f"Rows before cleaning: {before}")
-    logging.info(f"Rows after cleaning: {after}")
+    final_len = len(df)
+    logger.info(f"Rows before cleaning: {initial_len} | Rows after cleaning: {final_len}")
 
     return df
 
+def save_output(df: pd.DataFrame, path: Path) -> None:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, index=False)
+        logger.info(f"Saved preprocessed dataset to: {path}")
+    except Exception as e:
+        logger.error(f"Failed to save preprocessed data: {e}")
+        raise
 
-def save_output(df, path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    logging.info(f"Saving cleaned dataset to {os.path.abspath(path)}")
-    df.to_csv(path, index=False)
-
-
-def main():
-
-    logging.info("Starting preprocessing pipeline")
-
-    df = load_data(INPUT_PATH)
-
+def main() -> None:
+    logger.info("Starting preprocessing pipeline")
+    
+    df = load_data_from_db()
     df = validate_sleep_stage(df)
-
     df = clean_dataframe(df)
-
     save_output(df, OUTPUT_PATH)
-
-    logging.info("Preprocessing completed successfully")
-
+    
+    logger.info("Preprocessing completed successfully")
 
 if __name__ == "__main__":
     main()

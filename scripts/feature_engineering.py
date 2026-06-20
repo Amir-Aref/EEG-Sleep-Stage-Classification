@@ -1,60 +1,33 @@
 import logging
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
+from pathlib import Path
+from sklearn.preprocessing import StandardScaler
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+INPUT_PATH = PROJECT_ROOT / "outputs" / "preprocessed_features.csv"
+OUTPUT_PATH = PROJECT_ROOT / "outputs" / "model_ready_dataset.csv"
 
 EPSILON = 1e-8
-REQUIRED_POWER_COLUMNS = [
-    "delta_power",
-    "theta_power",
-    "alpha_power",
-    "beta_power",
-]
-SLEEP_STAGE_MAPPING = {
-    "Wake": 0,
-    "N1": 1,
-    "N2": 2,
-    "N3": 3,
-    "REM": 4,
-}
+REQUIRED_POWER_COLUMNS = ["delta_power", "theta_power", "alpha_power", "beta_power"]
+SLEEP_STAGE_MAPPING = {"Wake": 0, "N1": 1, "N2": 2, "N3": 3, "REM": 4}
 
+def load_data(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        logger.error(f"Input file not found: {path}")
+        raise FileNotFoundError(f"Missing file: {path}")
+    df = pd.read_csv(path)
+    logger.info(f"Loaded dataframe with shape: {df.shape}")
+    return df
 
-def main() -> None:
-    """Generate engineered EEG features and a model-ready dataset."""
-    project_root = Path(__file__).resolve().parent.parent
-    input_path = project_root / "outputs" / "preprocessed_intermediate.csv"
-    features_output_path = project_root / "outputs" / "preprocessed_features.csv"
-    model_ready_output_path = project_root / "outputs" / "model_ready_dataset.csv"
-
-    if not input_path.exists():
-        logger.error("Input file not found: %s", input_path)
-        logger.error("Run scripts/preprocess.py before feature engineering.")
-        return
-
-    logger.info("Loading intermediate dataset from: %s", input_path)
-    df = pd.read_csv(input_path)
-    logger.info("Loaded dataframe with shape: %s", df.shape)
-
-    missing_power_columns = [
-        column for column in REQUIRED_POWER_COLUMNS if column not in df.columns
-    ]
-    if missing_power_columns:
-        logger.error(
-            "Missing required power columns: %s",
-            missing_power_columns,
-        )
-        return
-
-    logger.info("Calculating engineered features...")
+def generate_features(df: pd.DataFrame) -> pd.DataFrame:
+    missing_cols = [col for col in REQUIRED_POWER_COLUMNS if col not in df.columns]
+    if missing_cols:
+        logger.error(f"Missing required columns: {missing_cols}")
+        raise ValueError(f"Missing columns: {missing_cols}")
 
     df["total_power"] = df[REQUIRED_POWER_COLUMNS].sum(axis=1)
     df["relative_delta_power"] = df["delta_power"] / (df["total_power"] + EPSILON)
@@ -65,48 +38,65 @@ def main() -> None:
     df["alpha_beta_ratio"] = df["alpha_power"] / (df["beta_power"] + EPSILON)
 
     if "signal_energy" in df.columns:
-        df["log_signal_energy"] = np.log(df["signal_energy"] + EPSILON)
+        df["log_signal_energy"] = np.log1p(df["signal_energy"])
     else:
-        logger.warning(
-            "Column 'signal_energy' not found; skipping log_signal_energy."
-        )
+        logger.warning("Column 'signal_energy' not found; skipping log_signal_energy.")
 
     if "sleep_stage" not in df.columns:
-        logger.error("Column 'sleep_stage' is missing; cannot encode labels.")
-        return
+        raise ValueError("Column 'sleep_stage' is missing; cannot encode labels.")
 
-    logger.info("Encoding sleep_stage labels...")
     df["sleep_stage_encoded"] = df["sleep_stage"].map(SLEEP_STAGE_MAPPING)
-
+    
     if df["sleep_stage_encoded"].isna().any():
-        logger.error("Found unmapped sleep_stage labels after preprocessing.")
-        return
-
+        raise ValueError("Found unmapped sleep_stage labels after preprocessing.")
+        
     df["sleep_stage_encoded"] = df["sleep_stage_encoded"].astype(int)
-
-    features_output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    logger.info("Saving feature-level dataset to: %s", features_output_path)
-    df.to_csv(features_output_path, index=False)
-
-    model_drop_columns = [
-        "sleep_stage",
-        "sleep_stage_raw",
-        "eeg_channel",
-        "subject_id",
-        "epoch_id",
-        "start_time_sec",
+    
+    numeric_features = [
+        "mean", "std", "min", "max", "signal_energy", "log_signal_energy",
+        "delta_power", "theta_power", "alpha_power", "beta_power", "total_power",
+        "relative_delta_power", "relative_theta_power",
+        "relative_alpha_power", "relative_beta_power",
+        "delta_theta_ratio", "alpha_beta_ratio"
     ]
-    model_ready_df = df.drop(columns=model_drop_columns, errors="ignore")
+    
+    cols_to_scale = [col for col in numeric_features if col in df.columns]
+    
+    if cols_to_scale:
+        scaler = StandardScaler()
+        df[cols_to_scale] = scaler.fit_transform(df[cols_to_scale])
+        logger.info("Applied StandardScaler to numeric features.")
+    
+    expected_columns = [
+        "subject_id", "epoch_id", "start_time_sec", "eeg_channel",
+        "mean", "std", "min", "max", "signal_energy", "log_signal_energy",
+        "delta_power", "theta_power", "alpha_power", "beta_power", "total_power",
+        "relative_delta_power", "relative_theta_power",
+        "relative_alpha_power", "relative_beta_power",
+        "delta_theta_ratio", "alpha_beta_ratio",
+        "sleep_stage", "sleep_stage_encoded"
+    ]
+    
+    final_columns = [col for col in expected_columns if col in df.columns]
+    extra_columns = [col for col in df.columns if col not in expected_columns]
+    
+    return df[final_columns + extra_columns]
 
-    logger.info("Saving model-ready dataset to: %s", model_ready_output_path)
-    model_ready_df.to_csv(model_ready_output_path, index=False)
+def save_data(df: pd.DataFrame, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(path, index=False)
+    logger.info(f"Saved model-ready dataset to: {path}")
 
-    logger.info(
-        "Feature engineering completed successfully. Model-ready shape: %s",
-        model_ready_df.shape,
-    )
-
+def main() -> None:
+    logger.info("Starting feature engineering...")
+    try:
+        df = load_data(INPUT_PATH)
+        df_featured = generate_features(df)
+        save_data(df_featured, OUTPUT_PATH)
+        logger.info(f"Feature engineering completed successfully. Model-ready shape: {df_featured.shape}")
+    except Exception as e:
+        logger.error(f"Feature engineering failed: {e}")
+        raise
 
 if __name__ == "__main__":
     main()
