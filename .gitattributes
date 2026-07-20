@@ -1,0 +1,36 @@
+﻿# Normalize text files in the repository.
+* text=auto
+
+# Cross-platform source and configuration files.
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+Dockerfile text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Windows-specific scripts.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files must never be line-ending normalized.
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.edf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.docx binary
+*.zip binary
+*.joblib binary
+*.pkl binary
+*.npy binary
+*.npz binary
