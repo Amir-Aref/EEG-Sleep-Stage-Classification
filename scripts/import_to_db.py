@@ -1,17 +1,32 @@
+﻿"""Import the current Phase 2 feature dataset into SQLite."""
+
+from __future__ import annotations
+
 import logging
 import sqlite3
-import pandas as pd
 from pathlib import Path
-from typing import List
-from database_connection import get_connection
+from typing import Final
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+import pandas as pd
+
+try:
+    from .config import LEGACY_PROCESSED_FEATURES_PATH
+    from .database_connection import get_connection
+except ImportError:
+    # Supports direct execution: python scripts/import_to_db.py
+    from config import LEGACY_PROCESSED_FEATURES_PATH
+    from database_connection import get_connection
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-INPUT_CSV = PROJECT_ROOT / "data" / "processed" / "sleep_edf_sample_features_subject0.csv"
+INPUT_CSV: Final[Path] = LEGACY_PROCESSED_FEATURES_PATH
 
-CREATE_SUBJECTS_TABLE = """
+CREATE_SUBJECTS_TABLE: Final[str] = """
 CREATE TABLE IF NOT EXISTS subjects (
     subject_id INTEGER PRIMARY KEY,
     source_dataset TEXT NOT NULL,
@@ -20,7 +35,7 @@ CREATE TABLE IF NOT EXISTS subjects (
 );
 """
 
-CREATE_EPOCHS_TABLE = """
+CREATE_EPOCHS_TABLE: Final[str] = """
 CREATE TABLE IF NOT EXISTS eeg_epochs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     subject_id INTEGER NOT NULL,
@@ -43,50 +58,92 @@ CREATE TABLE IF NOT EXISTS eeg_epochs (
 );
 """
 
-def setup_database(conn: sqlite3.Connection) -> None:
-    conn.execute(CREATE_SUBJECTS_TABLE)
-    conn.execute(CREATE_EPOCHS_TABLE)
-    conn.execute("DELETE FROM eeg_epochs;")
-    conn.execute("DELETE FROM subjects;")
 
-def import_data(csv_path: Path) -> None:
+def setup_database(connection: sqlite3.Connection) -> None:
+    """Create the Phase 2 schema and reset its current contents."""
+
+    connection.execute(CREATE_SUBJECTS_TABLE)
+    connection.execute(CREATE_EPOCHS_TABLE)
+
+    # Preserved temporarily for Phase 2 regression compatibility.
+    connection.execute("DELETE FROM eeg_epochs;")
+    connection.execute("DELETE FROM subjects;")
+
+
+def import_data(csv_path: Path = INPUT_CSV) -> None:
+    """Import the feature CSV into the Phase 2 database."""
+
     if not csv_path.exists():
-        logger.error(f"Input CSV not found at {csv_path}")
-        raise FileNotFoundError(f"Missing file: {csv_path}")
+        raise FileNotFoundError(f"Input CSV not found: {csv_path}")
+
+    dataframe = pd.read_csv(csv_path)
+
+    required_columns = {
+        "subject_id",
+        "epoch_id",
+        "start_time_sec",
+        "eeg_channel",
+        "sleep_stage",
+    }
+
+    missing_columns = sorted(
+        required_columns.difference(dataframe.columns)
+    )
+
+    if missing_columns:
+        raise ValueError(
+            "Input CSV is missing required columns: "
+            f"{missing_columns}"
+        )
 
     try:
-        df = pd.read_csv(csv_path)
-        
-        with get_connection() as conn:
-            setup_database(conn)
-            
-            subject_ids: List[int] = sorted(df["subject_id"].unique())
-            for sid in subject_ids:
-                conn.execute(
+        with get_connection() as connection:
+            setup_database(connection)
+
+            subject_ids = sorted(
+                int(subject_id)
+                for subject_id in dataframe["subject_id"].unique()
+            )
+
+            for subject_id in subject_ids:
+                connection.execute(
                     """
-                    INSERT OR IGNORE INTO subjects
-                    (subject_id, source_dataset, recording_id, notes)
-                    VALUES (?, ?, ?, ?)
+                    INSERT OR IGNORE INTO subjects (
+                        subject_id,
+                        source_dataset,
+                        recording_id,
+                        notes
+                    )
+                    VALUES (?, ?, ?, ?);
                     """,
                     (
-                        int(sid),
+                        subject_id,
                         "Sleep-EDF Database Expanded",
-                        f"subject_{sid}",
-                        "Imported from processed EEG feature CSV"
-                    )
+                        f"subject_{subject_id}",
+                        "Imported from processed EEG feature CSV",
+                    ),
                 )
-            
-            df.to_sql("eeg_epochs", conn, if_exists="append", index=False)
-            
+
+            dataframe.to_sql(
+                "eeg_epochs",
+                connection,
+                if_exists="append",
+                index=False,
+            )
+
         logger.info("Database import completed successfully.")
-        logger.info(f"Rows imported: {len(df)}")
-        
-    except Exception as e:
-        logger.error(f"Error during database import: {e}")
+        logger.info("Rows imported: %d", len(dataframe))
+
+    except Exception:
+        logger.exception("Database import failed.")
         raise
 
+
 def main() -> None:
-    import_data(INPUT_CSV)
+    """Run the Phase 2 database import."""
+
+    import_data()
+
 
 if __name__ == "__main__":
     main()

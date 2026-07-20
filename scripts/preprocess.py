@@ -1,84 +1,176 @@
-import logging
-import pandas as pd
-from pathlib import Path
-from typing import List
-from database_connection import get_connection
+"""Phase 2 compatibility preprocessing for EEG epoch features."""
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Iterable, Final
+
+import pandas as pd
+
+try:
+    from .config import (
+        POWER_COLUMNS,
+        PREPROCESSED_FEATURES_PATH,
+        VALID_SLEEP_STAGES,
+    )
+    from .database_connection import get_connection
+except ImportError:
+    from config import (
+        POWER_COLUMNS,
+        PREPROCESSED_FEATURES_PATH,
+        VALID_SLEEP_STAGES,
+    )
+    from database_connection import get_connection
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 logger = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_PATH = PROJECT_ROOT / "outputs" / "preprocessed_features.csv"
+OUTPUT_PATH: Final[Path] = PREPROCESSED_FEATURES_PATH
 
-VALID_STAGES = {"Wake", "N1", "N2", "N3", "REM"}
-POWER_COLUMNS = ["signal_energy", "delta_power", "theta_power", "alpha_power", "beta_power"]
+VALID_STAGE_SET: Final[frozenset[str]] = frozenset(
+    VALID_SLEEP_STAGES
+)
+
+NON_NEGATIVE_COLUMNS: Final[tuple[str, ...]] = (
+    "signal_energy",
+    *POWER_COLUMNS,
+)
+
 
 def load_data_from_db() -> pd.DataFrame:
+    """Load all EEG epoch records from SQLite."""
+
     try:
-        with get_connection() as conn:
-            df = pd.read_sql_query("SELECT * FROM eeg_epochs", conn)
-        logger.info(f"Loaded dataframe from database. Shape: {df.shape}")
-        return df
-    except Exception as e:
-        logger.error(f"Failed to load data from database: {e}")
+        with get_connection() as connection:
+            dataframe = pd.read_sql_query(
+                "SELECT * FROM eeg_epochs;",
+                connection,
+            )
+
+        logger.info(
+            "Loaded dataframe from database. Shape: %s",
+            dataframe.shape,
+        )
+
+        return dataframe
+
+    except Exception:
+        logger.exception("Failed to load data from database.")
         raise
 
-def validate_sleep_stage(df: pd.DataFrame) -> pd.DataFrame:
-    if "sleep_stage" not in df.columns:
-        raise ValueError("Column 'sleep_stage' not found in dataset")
 
-    initial_len = len(df)
-    df = df[df["sleep_stage"].isin(VALID_STAGES)]
-    dropped = initial_len - len(df)
+def validate_sleep_stage(
+    dataframe: pd.DataFrame,
+) -> pd.DataFrame:
+    """Remove rows whose sleep-stage labels are not supported."""
 
-    if dropped > 0:
-        logger.warning(f"Dropped {dropped} rows with invalid sleep_stage labels")
+    if "sleep_stage" not in dataframe.columns:
+        raise ValueError(
+            "Column 'sleep_stage' not found in dataset."
+        )
 
-    return df
+    initial_length = len(dataframe)
 
-def remove_physical_anomalies(df: pd.DataFrame, cols: List[str]) -> pd.DataFrame:
-    initial_len = len(df)
-    
-    for col in cols:
-        if col in df.columns:
-            df = df[df[col] >= 0]
-            
-    dropped = initial_len - len(df)
-    if dropped > 0:
-        logger.warning(f"Dropped {dropped} rows with negative physical values (e.g., power/energy)")
-        
-    return df
+    validated = dataframe[
+        dataframe["sleep_stage"].isin(VALID_STAGE_SET)
+    ].copy()
 
-def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    initial_len = len(df)
+    dropped_rows = initial_length - len(validated)
 
-    df = df.drop_duplicates()
-    df = df.dropna()
-    df = remove_physical_anomalies(df, POWER_COLUMNS)
+    if dropped_rows:
+        logger.warning(
+            "Dropped %d rows with invalid sleep-stage labels.",
+            dropped_rows,
+        )
 
-    final_len = len(df)
-    logger.info(f"Rows before cleaning: {initial_len} | Rows after cleaning: {final_len}")
+    return validated
 
-    return df
 
-def save_output(df: pd.DataFrame, path: Path) -> None:
+def remove_physical_anomalies(
+    dataframe: pd.DataFrame,
+    columns: Iterable[str],
+) -> pd.DataFrame:
+    """Remove rows containing negative energy or power values."""
+
+    initial_length = len(dataframe)
+    cleaned = dataframe
+
+    for column in columns:
+        if column in cleaned.columns:
+            cleaned = cleaned[cleaned[column] >= 0]
+
+    dropped_rows = initial_length - len(cleaned)
+
+    if dropped_rows:
+        logger.warning(
+            "Dropped %d rows with negative physical values.",
+            dropped_rows,
+        )
+
+    return cleaned.copy()
+
+
+def clean_dataframe(
+    dataframe: pd.DataFrame,
+) -> pd.DataFrame:
+    """Apply the original Phase 2 cleaning behavior."""
+
+    initial_length = len(dataframe)
+
+    cleaned = dataframe.drop_duplicates()
+    cleaned = cleaned.dropna()
+    cleaned = remove_physical_anomalies(
+        cleaned,
+        NON_NEGATIVE_COLUMNS,
+    )
+
+    logger.info(
+        "Rows before cleaning: %d | Rows after cleaning: %d",
+        initial_length,
+        len(cleaned),
+    )
+
+    return cleaned
+
+
+def save_output(
+    dataframe: pd.DataFrame,
+    path: Path = OUTPUT_PATH,
+) -> None:
+    """Save the preprocessed Phase 2 dataset."""
+
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(path, index=False)
-        logger.info(f"Saved preprocessed dataset to: {path}")
-    except Exception as e:
-        logger.error(f"Failed to save preprocessed data: {e}")
+        dataframe.to_csv(path, index=False)
+
+        logger.info(
+            "Saved preprocessed dataset to: %s",
+            path,
+        )
+
+    except Exception:
+        logger.exception("Failed to save preprocessed data.")
         raise
 
+
 def main() -> None:
-    logger.info("Starting preprocessing pipeline")
-    
-    df = load_data_from_db()
-    df = validate_sleep_stage(df)
-    df = clean_dataframe(df)
-    save_output(df, OUTPUT_PATH)
-    
-    logger.info("Preprocessing completed successfully")
+    """Run Phase 2 compatibility preprocessing."""
+
+    logger.info("Starting preprocessing pipeline.")
+
+    dataframe = load_data_from_db()
+    dataframe = validate_sleep_stage(dataframe)
+    dataframe = clean_dataframe(dataframe)
+
+    save_output(dataframe)
+
+    logger.info("Preprocessing completed successfully.")
+
 
 if __name__ == "__main__":
     main()
