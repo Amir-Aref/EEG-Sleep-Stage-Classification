@@ -1,4 +1,4 @@
-﻿"""Central configuration for the EEG sleep-stage project.
+"""Central configuration for the EEG sleep-stage project.
 
 All project paths and shared domain constants must be defined here.
 Scripts should import values from this module instead of recreating
@@ -24,6 +24,7 @@ RAW_DATA_DIR: Final[Path] = DATA_DIR / "raw"
 INTERIM_DATA_DIR: Final[Path] = DATA_DIR / "interim"
 PROCESSED_DATA_DIR: Final[Path] = DATA_DIR / "processed"
 SAMPLE_DATA_DIR: Final[Path] = DATA_DIR / "sample"
+DATA_METADATA_DIR: Final[Path] = DATA_DIR / "metadata"
 
 DATABASE_DIR: Final[Path] = PROJECT_ROOT / "database"
 DATABASE_PATH: Final[Path] = DATABASE_DIR / "sleep_eeg.db"
@@ -36,6 +37,45 @@ REPORTS_DIR: Final[Path] = PROJECT_ROOT / "reports"
 DOCS_DIR: Final[Path] = PROJECT_ROOT / "docs"
 SQL_QUERY_OUTPUTS_DIR: Final[Path] = DOCS_DIR / "sql_query_outputs"
 
+
+
+# ---------------------------------------------------------------------
+# External dataset source
+# ---------------------------------------------------------------------
+
+SLEEP_EDFX_VERSION: Final[str] = "1.0.0"
+
+SLEEP_EDFX_BASE_URL: Final[str] = (
+    "https://physionet.org/files/sleep-edfx/"
+    f"{SLEEP_EDFX_VERSION}"
+)
+
+SLEEP_EDFX_SLEEP_CASSETTE_URL: Final[str] = (
+    f"{SLEEP_EDFX_BASE_URL}/sleep-cassette"
+)
+
+SLEEP_EDFX_CHECKSUMS_URL: Final[str] = (
+    f"{SLEEP_EDFX_BASE_URL}/SHA256SUMS.txt"
+)
+
+SLEEP_EDFX_RAW_DIR: Final[Path] = (
+    RAW_DATA_DIR
+    / "sleep-edfx"
+    / SLEEP_EDFX_VERSION
+    / "sleep-cassette"
+)
+
+SLEEP_EDFX_MANIFEST_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_sleep_cassette_manifest.csv"
+)
+
+SLEEP_EDFX_CHECKSUMS_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_sha256sums.txt"
+)
+
+EXPECTED_SLEEP_CASSETTE_RECORDINGS: Final[int] = 153
 
 # ---------------------------------------------------------------------
 # Current Phase 2 compatibility paths
@@ -108,6 +148,8 @@ POWER_COLUMNS: Final[tuple[str, ...]] = (
 
 RUNTIME_DIRECTORIES: Final[tuple[Path, ...]] = (
     RAW_DATA_DIR,
+    DATA_METADATA_DIR,
+    SLEEP_EDFX_RAW_DIR,
     INTERIM_DATA_DIR,
     PROCESSED_DATA_DIR,
     DATABASE_DIR,

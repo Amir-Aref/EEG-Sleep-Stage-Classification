@@ -1,0 +1,14 @@
+{
+  "dataset_name": "Sleep-EDF Expanded",
+  "dataset_version": "1.0.0",
+  "subset": "sleep-cassette",
+  "recording_count": 153,
+  "subject_count": 78,
+  "night_counts": {
+    "1": 76,
+    "2": 77
+  },
+  "manifest_sha256": "4fa2db67a5775d72f43050d882e64bca6b8d369f08f6e5f0092fbb5c24ac5487",
+  "source_directory": "https://physionet.org/files/sleep-edfx/1.0.0/sleep-cassette",
+  "checksum_source": "https://physionet.org/files/sleep-edfx/1.0.0/SHA256SUMS.txt"
+}

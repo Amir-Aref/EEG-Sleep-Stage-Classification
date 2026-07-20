@@ -16,3 +16,15 @@ sqlite-wal
 
 # Notebooks
 ipynb_checkpoints/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+mlruns/
+
+# Raw physiological recordings
+data/raw/**/*.edf
+data/raw/**/*.edf+
+data/raw/**/*.zip
+data/raw/**/*.gz
