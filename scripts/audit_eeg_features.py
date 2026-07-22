@@ -189,7 +189,11 @@ def audit_deterministic_relationships(
 
     return {
         name: {
-            "maximum_normalized_error": error,
+            "maximum_normalized_error": (
+                0.0
+                if error <= RELATION_TOLERANCE
+                else round(error, 15)
+            ),
             "passes": bool(
                 error <= RELATION_TOLERANCE
             ),

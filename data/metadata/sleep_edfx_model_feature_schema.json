@@ -70,6 +70,7 @@
   },
   "current_dataset_scope": {
     "subjects": 4,
-    "purpose": "Local pipeline validation only; final benchmarking must use the larger Kaggle execution dataset."
+    "recordings": 4,
+    "purpose": "Dataset scope is determined from the current pipeline execution. Local four-subject runs are for validation; larger Kaggle runs are used for final benchmarking."
   }
 }

@@ -1,4 +1,4 @@
-﻿"""Extract validated EEG features from Sleep-EDF epochs.
+"""Extract validated EEG features from Sleep-EDF epochs.
 
 The extractor:
 - processes one recording at a time
@@ -1053,13 +1053,19 @@ def build_summary(
                 "amplitude_artifact_flag"
             ].sum()
         ),
-        "median_std_uv": float(
-            dataframe["std_uv"].median()
+        "median_std_uv": round(
+            float(
+                dataframe["std_uv"].median()
+            ),
+            12,
         ),
-        "median_total_band_power_uv2": float(
-            dataframe[
-                "total_band_power_uv2"
-            ].median()
+        "median_total_band_power_uv2": round(
+            float(
+                dataframe[
+                    "total_band_power_uv2"
+                ].median()
+            ),
+            12,
         ),
     }
 

@@ -295,10 +295,13 @@ def save_schema(
     )
 
     MODEL_FEATURE_SCHEMA_PATH.write_text(
-        json.dumps(
-            schema,
-            indent=2,
-            ensure_ascii=False,
+        (
+            json.dumps(
+                schema,
+                indent=2,
+                ensure_ascii=False,
+            )
+            + "\n"
         ),
         encoding="utf-8",
         newline="\n",
