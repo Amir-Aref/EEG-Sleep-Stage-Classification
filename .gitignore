@@ -28,3 +28,9 @@ data/raw/**/*.edf
 data/raw/**/*.edf+
 data/raw/**/*.zip
 data/raw/**/*.gz
+
+# Incomplete raw-data downloads
+data/raw/**/*.part
+
+# Machine-specific operational download state
+data/metadata/sleep_edfx_download_inventory.csv
