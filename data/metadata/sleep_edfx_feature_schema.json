@@ -1,0 +1,103 @@
+{
+  "metadata_columns": [
+    "subject_id",
+    "night",
+    "recording_id",
+    "epoch_id",
+    "start_time_sec",
+    "end_time_sec",
+    "start_sample",
+    "stop_sample",
+    "sampling_frequency_hz",
+    "epoch_duration_sec",
+    "eeg_channel",
+    "sleep_stage_raw",
+    "sleep_stage",
+    "sleep_stage_encoded"
+  ],
+  "quality_columns": [
+    "sample_count",
+    "is_finite_signal",
+    "flatline_flag",
+    "amplitude_artifact_flag",
+    "quality_issue_flag"
+  ],
+  "feature_columns": [
+    "mean_uv",
+    "std_uv",
+    "median_uv",
+    "min_uv",
+    "max_uv",
+    "rms_uv",
+    "peak_to_peak_uv",
+    "mean_square_uv2",
+    "signal_energy_uv2",
+    "zero_crossing_rate",
+    "line_length_uv",
+    "skewness",
+    "kurtosis_excess",
+    "hjorth_activity",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "delta_power_uv2",
+    "theta_power_uv2",
+    "alpha_power_uv2",
+    "sigma_power_uv2",
+    "beta_power_uv2",
+    "total_band_power_uv2",
+    "relative_delta_power",
+    "relative_theta_power",
+    "relative_alpha_power",
+    "relative_sigma_power",
+    "relative_beta_power",
+    "delta_theta_ratio",
+    "theta_alpha_ratio",
+    "alpha_beta_ratio",
+    "sigma_beta_ratio",
+    "spectral_entropy",
+    "dominant_frequency_hz",
+    "spectral_centroid_hz",
+    "spectral_edge_frequency_95_hz"
+  ],
+  "target_column": "sleep_stage_encoded",
+  "target_label_column": "sleep_stage",
+  "signal_channel": "EEG Fpz-Cz",
+  "signal_unit": "microvolts",
+  "filter": {
+    "type": "Butterworth SOS band-pass",
+    "order": 4,
+    "low_hz": 0.3,
+    "high_hz": 35.0,
+    "application": "continuous recording before epoch slicing"
+  },
+  "welch": {
+    "window": "hann",
+    "window_seconds": 4.0,
+    "overlap_fraction": 0.5,
+    "detrend": "constant",
+    "scaling": "density"
+  },
+  "frequency_bands_hz": {
+    "delta": [
+      0.5,
+      4.0
+    ],
+    "theta": [
+      4.0,
+      8.0
+    ],
+    "alpha": [
+      8.0,
+      12.0
+    ],
+    "sigma": [
+      12.0,
+      16.0
+    ],
+    "beta": [
+      16.0,
+      30.0
+    ]
+  },
+  "scaling_applied": false
+}

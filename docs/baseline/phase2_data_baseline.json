@@ -1,0 +1,44 @@
+{
+  "shape": [
+    2650,
+    25
+  ],
+  "subjects": 1,
+  "columns": [
+    "subject_id",
+    "epoch_id",
+    "start_time_sec",
+    "eeg_channel",
+    "mean",
+    "std",
+    "min",
+    "max",
+    "signal_energy",
+    "log_signal_energy",
+    "delta_power",
+    "theta_power",
+    "alpha_power",
+    "beta_power",
+    "total_power",
+    "relative_delta_power",
+    "relative_theta_power",
+    "relative_alpha_power",
+    "relative_beta_power",
+    "delta_theta_ratio",
+    "alpha_beta_ratio",
+    "sleep_stage",
+    "sleep_stage_encoded",
+    "id",
+    "sleep_stage_raw"
+  ],
+  "class_counts": {
+    "N1": 58,
+    "N2": 250,
+    "N3": 220,
+    "REM": 125,
+    "Wake": 1997
+  },
+  "semantic_sha256_without_id": "249d84ebcf017ac17f2027846dcce0b28bdc9d998a4359b2d97654fa773db468",
+  "database_integrity": "ok",
+  "database_rows": 2650
+}

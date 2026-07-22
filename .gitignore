@@ -16,3 +16,27 @@ sqlite-wal
 
 # Notebooks
 ipynb_checkpoints/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+mlruns/
+
+# Raw physiological recordings
+data/raw/**/*.edf
+data/raw/**/*.edf+
+data/raw/**/*.zip
+data/raw/**/*.gz
+
+# Incomplete raw-data downloads
+data/raw/**/*.part
+
+# Machine-specific operational download state
+data/metadata/sleep_edfx_download_inventory.csv
+# Generated EEG feature artifacts
+data/interim/features_by_recording/
+data/processed/sleep_edfx_epoch_features.csv
+
+# Generated model-input dataset
+data/processed/sleep_edfx_model_input.csv
