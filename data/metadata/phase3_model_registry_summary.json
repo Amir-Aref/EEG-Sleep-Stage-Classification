@@ -1,0 +1,163 @@
+{
+  "model_count": 5,
+  "models": [
+    {
+      "candidate_count": 1,
+      "complexity_rank": 0,
+      "eligible_for_selection": false,
+      "estimator": "sklearn.dummy.DummyClassifier",
+      "fixed_parameters": {
+        "random_state": 42,
+        "strategy": "prior"
+      },
+      "model_name": "dummy_prior",
+      "parameter_grid": [
+        {}
+      ],
+      "preprocessing": "passthrough",
+      "role": "non_selectable_baseline"
+    },
+    {
+      "candidate_count": 8,
+      "complexity_rank": 4,
+      "eligible_for_selection": true,
+      "estimator": "sklearn.ensemble.ExtraTreesClassifier",
+      "fixed_parameters": {
+        "class_weight": "balanced",
+        "n_estimators": 300,
+        "n_jobs": -1,
+        "random_state": 42
+      },
+      "model_name": "extra_trees",
+      "parameter_grid": [
+        {
+          "classifier__max_depth": [
+            null,
+            12
+          ],
+          "classifier__max_features": [
+            "sqrt",
+            0.5
+          ],
+          "classifier__min_samples_leaf": [
+            1,
+            4
+          ]
+        }
+      ],
+      "preprocessing": "passthrough",
+      "role": "extremely_randomized_tree_ensemble"
+    },
+    {
+      "candidate_count": 3,
+      "complexity_rank": 1,
+      "eligible_for_selection": true,
+      "estimator": "sklearn.linear_model.LogisticRegression",
+      "fixed_parameters": {
+        "class_weight": "balanced",
+        "l1_ratio": 0.0,
+        "max_iter": 3000,
+        "random_state": 42,
+        "solver": "lbfgs"
+      },
+      "model_name": "logistic_regression",
+      "parameter_grid": [
+        {
+          "classifier__C": [
+            0.1,
+            1.0,
+            10.0
+          ]
+        }
+      ],
+      "preprocessing": "standard_scaler",
+      "role": "regularized_linear_model"
+    },
+    {
+      "candidate_count": 8,
+      "complexity_rank": 3,
+      "eligible_for_selection": true,
+      "estimator": "sklearn.ensemble.RandomForestClassifier",
+      "fixed_parameters": {
+        "class_weight": "balanced_subsample",
+        "n_estimators": 300,
+        "n_jobs": -1,
+        "random_state": 42
+      },
+      "model_name": "random_forest",
+      "parameter_grid": [
+        {
+          "classifier__max_depth": [
+            null,
+            12
+          ],
+          "classifier__max_features": [
+            "sqrt",
+            0.5
+          ],
+          "classifier__min_samples_leaf": [
+            1,
+            4
+          ]
+        }
+      ],
+      "preprocessing": "passthrough",
+      "role": "bagged_tree_ensemble"
+    },
+    {
+      "candidate_count": 9,
+      "complexity_rank": 2,
+      "eligible_for_selection": true,
+      "estimator": "sklearn.linear_model.SGDClassifier",
+      "fixed_parameters": {
+        "average": true,
+        "class_weight": "balanced",
+        "early_stopping": false,
+        "loss": "log_loss",
+        "max_iter": 3000,
+        "n_jobs": -1,
+        "random_state": 42,
+        "tol": 0.0001
+      },
+      "model_name": "sgd_logistic",
+      "parameter_grid": [
+        {
+          "classifier__alpha": [
+            1e-05,
+            0.0001,
+            0.001
+          ],
+          "classifier__penalty": [
+            "l2"
+          ]
+        },
+        {
+          "classifier__alpha": [
+            1e-05,
+            0.0001,
+            0.001
+          ],
+          "classifier__l1_ratio": [
+            0.15,
+            0.5
+          ],
+          "classifier__penalty": [
+            "elasticnet"
+          ]
+        }
+      ],
+      "preprocessing": "standard_scaler",
+      "role": "scalable_regularized_linear_model"
+    }
+  ],
+  "primary_metric": "macro_f1",
+  "probability_output_required": true,
+  "random_seed": 42,
+  "registry_path": "config/phase3_model_registry.json",
+  "registry_schema_version": "1.0.0",
+  "registry_sha256": "a011d08b9d9048232d8ef0862be2c4d1706650c737d3a9218102fdc3340ade27",
+  "schema_version": "1.0.0",
+  "scikit_learn_version": "1.9.0",
+  "selection_model_count": 4,
+  "total_candidate_count": 29
+}
