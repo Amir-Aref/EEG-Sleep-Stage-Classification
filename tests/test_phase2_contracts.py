@@ -1,4 +1,4 @@
-﻿"""Automated contracts for the rebuilt Phase 2 EEG pipeline.
+"""Automated contracts for the rebuilt Phase 2 EEG pipeline.
 
 Unit tests do not require raw EDF files.
 Generated-artifact tests are skipped when local artifacts are absent,
@@ -392,9 +392,16 @@ class EdaArtifactTests(unittest.TestCase):
             "generated_figures"
         ]
 
+        expected_figure_count = (
+            8
+            + int(
+                summary["recording_count"]
+            )
+        )
+
         self.assertEqual(
             len(figures),
-            12,
+            expected_figure_count,
         )
 
         for relative_path in figures:

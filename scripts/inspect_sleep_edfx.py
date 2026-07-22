@@ -33,11 +33,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-EXPECTED_RECORDINGS: Final[tuple[str, ...]] = (
-    "SC4001",
-    "SC4011",
-    "SC4021",
-    "SC4031",
+VALID_FILE_STATUSES: Final[frozenset[str]] = frozenset(
+    {
+        "downloaded_verified",
+        "verified_existing",
+    }
 )
 
 EXPECTED_SLEEP_LABEL_PREFIX: Final[str] = "Sleep stage"
@@ -71,22 +71,37 @@ def load_verified_inventory() -> pd.DataFrame:
     )
 
     selected = inventory[
-        inventory["recording_id"].isin(
-            EXPECTED_RECORDINGS
+        inventory["status"].isin(
+            VALID_FILE_STATUSES
         )
     ].copy()
 
-    if len(selected) != 8:
+    if selected.empty:
         raise ValueError(
-            "Expected eight verified files for four recordings, "
-            f"but found {len(selected)}."
+            "No verified EDF files were found in the inventory."
         )
 
-    if not selected["status"].eq(
-        "verified_existing"
-    ).all():
+    pair_counts = (
+        selected.groupby(
+            ["recording_id", "file_type"]
+        )
+        .size()
+        .unstack(fill_value=0)
+    )
+
+    for required_type in ("psg", "hypnogram"):
+        if required_type not in pair_counts.columns:
+            pair_counts[required_type] = 0
+
+    invalid_pairs = pair_counts[
+        (pair_counts["psg"] != 1)
+        | (pair_counts["hypnogram"] != 1)
+    ]
+
+    if not invalid_pairs.empty:
         raise ValueError(
-            "All selected files must have verified_existing status."
+            "Incomplete or duplicate EDF pairs detected: "
+            f"{invalid_pairs.to_dict(orient='index')}"
         )
 
     return selected
@@ -227,16 +242,16 @@ def inspect_recording(
 def validate_report(report: pd.DataFrame) -> None:
     """Validate key structural properties of inspected recordings."""
 
-    if len(report) != len(EXPECTED_RECORDINGS):
+    if report.empty:
         raise ValueError(
-            "Unexpected inspection report length."
+            "EDF inspection report is empty."
         )
 
     if report["recording_id"].nunique() != len(
-        EXPECTED_RECORDINGS
+        report
     ):
         raise ValueError(
-            "Duplicate or missing recording IDs."
+            "Duplicate recording IDs detected."
         )
 
     if not report["default_channel_present"].all():
@@ -281,7 +296,13 @@ def main() -> None:
 
     records: list[dict[str, object]] = []
 
-    for recording_id in EXPECTED_RECORDINGS:
+    recording_ids = sorted(
+        inventory["recording_id"]
+        .astype(str)
+        .unique()
+    )
+
+    for recording_id in recording_ids:
         psg_path, hypnogram_path = resolve_pair(
             inventory,
             recording_id,

@@ -1,4 +1,4 @@
-﻿"""Build a leakage-safe, unscaled EEG model-input table."""
+"""Build a leakage-safe, unscaled EEG model-input table."""
 
 from __future__ import annotations
 
@@ -243,7 +243,10 @@ def validate_model_input(
         )
 
 
-def save_schema() -> None:
+def save_schema(
+    subject_count: int,
+    recording_count: int,
+) -> None:
     """Save explicit feature, split and scaling policies."""
 
     schema = {
@@ -275,10 +278,13 @@ def save_schema() -> None:
             "fit_before_split_allowed": False,
         },
         "current_dataset_scope": {
-            "subjects": 4,
+            "subjects": int(subject_count),
+            "recordings": int(recording_count),
             "purpose": (
-                "Local pipeline validation only; final benchmarking "
-                "must use the larger Kaggle execution dataset."
+                "Dataset scope is determined from the current "
+                "pipeline execution. Local four-subject runs are "
+                "for validation; larger Kaggle runs are used for "
+                "final benchmarking."
             ),
         },
     }
@@ -343,7 +349,14 @@ def main() -> None:
         lineterminator="\n",
     )
 
-    save_schema()
+    save_schema(
+        subject_count=int(
+            model_input["subject_id"].nunique()
+        ),
+        recording_count=int(
+            model_input["recording_id"].nunique()
+        ),
+    )
 
     print("\n=== MODEL INPUT DATASET ===")
     print("Rows:", len(model_input))
