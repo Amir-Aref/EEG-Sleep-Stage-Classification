@@ -1,0 +1,106 @@
+{
+  "row_count": 3921,
+  "subject_count": 4,
+  "recording_count": 4,
+  "feature_count": 28,
+  "class_distribution": [
+    {
+      "sleep_stage": "Wake",
+      "count": 613,
+      "percentage": 15.63376689619995
+    },
+    {
+      "sleep_stage": "N1",
+      "count": 322,
+      "percentage": 8.21219076766131
+    },
+    {
+      "sleep_stage": "N2",
+      "count": 1842,
+      "percentage": 46.97781178270849
+    },
+    {
+      "sleep_stage": "N3",
+      "count": 477,
+      "percentage": 12.165263963274676
+    },
+    {
+      "sleep_stage": "REM",
+      "count": 667,
+      "percentage": 17.010966590155572
+    }
+  ],
+  "outlier_policy": {
+    "method": "global Tukey IQR rule",
+    "multiplier": 1.5,
+    "rows_removed": 0,
+    "purpose": "Descriptive flagging only; no samples are removed during EDA."
+  },
+  "highest_outlier_features": [
+    {
+      "feature": "median_uv",
+      "outlier_count": 414,
+      "outlier_percentage": 10.558530986993114
+    },
+    {
+      "feature": "beta_power_uv2",
+      "outlier_count": 364,
+      "outlier_percentage": 9.283346085182352
+    },
+    {
+      "feature": "relative_sigma_power",
+      "outlier_count": 329,
+      "outlier_percentage": 8.390716653914817
+    },
+    {
+      "feature": "delta_power_uv2",
+      "outlier_count": 323,
+      "outlier_percentage": 8.237694465697526
+    },
+    {
+      "feature": "mean_uv",
+      "outlier_count": 298,
+      "outlier_percentage": 7.600102014792146
+    },
+    {
+      "feature": "theta_power_uv2",
+      "outlier_count": 239,
+      "outlier_percentage": 6.095383830655445
+    },
+    {
+      "feature": "sigma_power_uv2",
+      "outlier_count": 233,
+      "outlier_percentage": 5.942361642438153
+    },
+    {
+      "feature": "relative_alpha_power",
+      "outlier_count": 219,
+      "outlier_percentage": 5.58530986993114
+    },
+    {
+      "feature": "skewness",
+      "outlier_count": 219,
+      "outlier_percentage": 5.58530986993114
+    },
+    {
+      "feature": "kurtosis_excess",
+      "outlier_count": 217,
+      "outlier_percentage": 5.534302473858709
+    }
+  ],
+  "generated_figures": [
+    "reports/eda/class_distribution.png",
+    "reports/eda/relative_band_power_by_stage.png",
+    "reports/eda/boxplot_relative_delta_power.png",
+    "reports/eda/boxplot_relative_sigma_power.png",
+    "reports/eda/boxplot_spectral_entropy.png",
+    "reports/eda/boxplot_zero_crossing_rate.png",
+    "reports/eda/subject_shift_std_uv.png",
+    "reports/eda/subject_shift_spectral_centroid_hz.png",
+    "reports/eda/hypnogram_SC4001.png",
+    "reports/eda/hypnogram_SC4011.png",
+    "reports/eda/hypnogram_SC4021.png",
+    "reports/eda/hypnogram_SC4031.png"
+  ],
+  "dataset_scope": "Four-subject local pipeline validation dataset. Final statistical conclusions require the larger Kaggle execution dataset."
+}

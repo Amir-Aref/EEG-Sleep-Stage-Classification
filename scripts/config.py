@@ -145,6 +145,32 @@ MODEL_FEATURE_SCHEMA_PATH: Final[Path] = (
     / "sleep_edfx_model_feature_schema.json"
 )
 
+EDA_OUTPUT_DIR: Final[Path] = (
+    PROJECT_ROOT
+    / "reports"
+    / "eda"
+)
+
+EDA_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_eda_summary.json"
+)
+
+EDA_OUTLIER_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_outlier_summary.csv"
+)
+
+EDA_STAGE_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_eda_stage_summary.csv"
+)
+
+EDA_SUBJECT_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_eda_subject_summary.csv"
+)
+
 EEG_FILTER_LOW_HZ: Final[float] = 0.3
 EEG_FILTER_HIGH_HZ: Final[float] = 35.0
 WELCH_WINDOW_SECONDS: Final[float] = 4.0
