@@ -1,0 +1,5 @@
+recording_id,subject_id,night,sampling_frequency_hz,raw_duration_seconds,annotation_end_seconds,raw_annotation_start_difference_seconds,epochs_before_wake_trim,epochs_after_wake_trim,epochs_removed_by_wake_trim,trim_start_seconds,trim_end_seconds,count_wake,count_n1,count_n2,count_n3,count_rem
+SC4001,0,1,100.0,79500.0,86400.0,,2650,841,1809,28830.0,54060.0,188,58,250,220,125
+SC4011,1,1,100.0,84060.0,86400.0,,2802,1103,1699,19740.0,52830.0,157,109,562,105,170
+SC4021,2,1,100.0,84120.0,86400.0,,2804,1025,1779,20070.0,50820.0,128,94,545,95,163
+SC4031,3,1,100.0,84600.0,86400.0,,2820,952,1868,24330.0,52890.0,140,61,485,57,209

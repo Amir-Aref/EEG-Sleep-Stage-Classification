@@ -85,6 +85,32 @@ EDF_INSPECTION_REPORT_PATH: Final[Path] = (
     / "sleep_edfx_edf_inspection.csv"
 )
 
+EPOCH_METADATA_PATH: Final[Path] = (
+    INTERIM_DATA_DIR
+    / "sleep_edfx_epoch_metadata.csv"
+)
+
+EPOCH_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_epoch_summary.csv"
+)
+
+WAKE_TRIM_PADDING_MINUTES: Final[int] = 30
+
+SLEEP_EDF_ANNOTATION_MAPPING: Final[dict[str, str]] = {
+    "Sleep stage W": "Wake",
+    "Sleep stage 1": "N1",
+    "Sleep stage 2": "N2",
+    "Sleep stage 3": "N3",
+    "Sleep stage 4": "N3",
+    "Sleep stage R": "REM",
+}
+
+IGNORED_SLEEP_EDF_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "Sleep stage ?",
+    "Movement time",
+)
+
 EXPECTED_SLEEP_CASSETTE_RECORDINGS: Final[int] = 153
 
 # ---------------------------------------------------------------------
