@@ -80,6 +80,11 @@ SLEEP_EDFX_DOWNLOAD_INVENTORY_PATH: Final[Path] = (
     / "sleep_edfx_download_inventory.csv"
 )
 
+EDF_INSPECTION_REPORT_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_edf_inspection.csv"
+)
+
 EXPECTED_SLEEP_CASSETTE_RECORDINGS: Final[int] = 153
 
 # ---------------------------------------------------------------------
