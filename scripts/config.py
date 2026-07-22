@@ -135,6 +135,16 @@ SUBJECT_FEATURE_SUMMARY_PATH: Final[Path] = (
     / "sleep_edfx_subject_feature_summary.csv"
 )
 
+MODEL_INPUT_DATASET_PATH: Final[Path] = (
+    PROCESSED_DATA_DIR
+    / "sleep_edfx_model_input.csv"
+)
+
+MODEL_FEATURE_SCHEMA_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_model_feature_schema.json"
+)
+
 EEG_FILTER_LOW_HZ: Final[float] = 0.3
 EEG_FILTER_HIGH_HZ: Final[float] = 35.0
 WELCH_WINDOW_SECONDS: Final[float] = 4.0

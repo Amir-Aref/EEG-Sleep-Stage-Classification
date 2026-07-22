@@ -1,0 +1,75 @@
+{
+  "identifier_columns": [
+    "subject_id",
+    "recording_id",
+    "night",
+    "epoch_id"
+  ],
+  "target_columns": [
+    "sleep_stage",
+    "sleep_stage_encoded"
+  ],
+  "quality_columns": [
+    "quality_issue_flag"
+  ],
+  "selected_feature_count": 28,
+  "selected_features": [
+    "mean_uv",
+    "std_uv",
+    "median_uv",
+    "min_uv",
+    "max_uv",
+    "peak_to_peak_uv",
+    "zero_crossing_rate",
+    "line_length_uv",
+    "skewness",
+    "kurtosis_excess",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "delta_power_uv2",
+    "theta_power_uv2",
+    "alpha_power_uv2",
+    "sigma_power_uv2",
+    "beta_power_uv2",
+    "relative_delta_power",
+    "relative_theta_power",
+    "relative_alpha_power",
+    "relative_sigma_power",
+    "theta_alpha_ratio",
+    "alpha_beta_ratio",
+    "sigma_beta_ratio",
+    "spectral_entropy",
+    "dominant_frequency_hz",
+    "spectral_centroid_hz",
+    "spectral_edge_frequency_95_hz"
+  ],
+  "dropped_feature_count": 7,
+  "dropped_features": {
+    "rms_uv": "Redundant with mean_uv and std_uv because RMS² = mean² + variance.",
+    "mean_square_uv2": "Deterministically equal to rms_uv squared.",
+    "signal_energy_uv2": "Deterministically equal to mean square multiplied by sample count.",
+    "hjorth_activity": "Deterministically equal to signal variance.",
+    "total_band_power_uv2": "Deterministically equal to the sum of absolute band powers.",
+    "relative_beta_power": "Linearly determined by the other four relative powers because their sum is one.",
+    "delta_theta_ratio": "Removed after empirical Spearman correlation magnitude exceeded 0.995."
+  },
+  "feature_scaling_applied": false,
+  "split_policy": {
+    "group_column": "subject_id",
+    "random_epoch_split_allowed": false,
+    "reason": "Epochs from the same subject are correlated and must not cross dataset partitions."
+  },
+  "scaling_policy": {
+    "fit_on": "training partition only",
+    "transform": [
+      "training partition",
+      "validation partition",
+      "test partition"
+    ],
+    "fit_before_split_allowed": false
+  },
+  "current_dataset_scope": {
+    "subjects": 4,
+    "purpose": "Local pipeline validation only; final benchmarking must use the larger Kaggle execution dataset."
+  }
+}
