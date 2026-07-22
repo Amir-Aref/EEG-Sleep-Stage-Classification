@@ -34,3 +34,6 @@ data/raw/**/*.part
 
 # Machine-specific operational download state
 data/metadata/sleep_edfx_download_inventory.csv
+# Generated EEG feature artifacts
+data/interim/features_by_recording/
+data/processed/sleep_edfx_epoch_features.csv

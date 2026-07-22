@@ -95,6 +95,42 @@ EPOCH_SUMMARY_PATH: Final[Path] = (
     / "sleep_edfx_epoch_summary.csv"
 )
 
+FEATURE_PARTS_DIR: Final[Path] = (
+    INTERIM_DATA_DIR
+    / "features_by_recording"
+)
+
+EPOCH_FEATURES_PATH: Final[Path] = (
+    PROCESSED_DATA_DIR
+    / "sleep_edfx_epoch_features.csv"
+)
+
+FEATURE_SCHEMA_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_feature_schema.json"
+)
+
+FEATURE_EXTRACTION_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_feature_extraction_summary.csv"
+)
+
+EEG_FILTER_LOW_HZ: Final[float] = 0.3
+EEG_FILTER_HIGH_HZ: Final[float] = 35.0
+WELCH_WINDOW_SECONDS: Final[float] = 4.0
+WELCH_OVERLAP_FRACTION: Final[float] = 0.5
+
+EEG_FREQUENCY_BANDS: Final[dict[str, tuple[float, float]]] = {
+    "delta": (0.5, 4.0),
+    "theta": (4.0, 8.0),
+    "alpha": (8.0, 12.0),
+    "sigma": (12.0, 16.0),
+    "beta": (16.0, 30.0),
+}
+
+FLATLINE_STD_THRESHOLD_UV: Final[float] = 0.1
+AMPLITUDE_ARTIFACT_THRESHOLD_UV: Final[float] = 500.0
+
 WAKE_TRIM_PADDING_MINUTES: Final[int] = 30
 
 SLEEP_EDF_ANNOTATION_MAPPING: Final[dict[str, str]] = {
@@ -186,6 +222,7 @@ RUNTIME_DIRECTORIES: Final[tuple[Path, ...]] = (
     RAW_DATA_DIR,
     DATA_METADATA_DIR,
     SLEEP_EDFX_RAW_DIR,
+    FEATURE_PARTS_DIR,
     INTERIM_DATA_DIR,
     PROCESSED_DATA_DIR,
     DATABASE_DIR,
