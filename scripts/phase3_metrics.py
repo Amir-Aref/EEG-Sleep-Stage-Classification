@@ -344,33 +344,6 @@ def validate_prediction_contract(
         )
     )
 
-    probability_predictions = np.asarray(
-        class_labels,
-        dtype=int,
-    )[
-        np.argmax(
-            probability_array,
-            axis=1,
-        )
-    ]
-
-    if not np.array_equal(
-        predicted_array,
-        probability_predictions,
-    ):
-        mismatch_count = int(
-            np.sum(
-                predicted_array
-                != probability_predictions
-            )
-        )
-
-        raise ValueError(
-            "Predicted labels do not match the "
-            "maximum-probability classes; "
-            f"{mismatch_count} mismatches found."
-        )
-
     return (
         true_array,
         predicted_array,
@@ -424,6 +397,27 @@ def calculate_classification_metrics(
         encoded
         for _, encoded in class_items
     ]
+
+    probability_predictions = np.asarray(
+        class_labels,
+        dtype=int,
+    )[
+        np.argmax(
+            probability_array,
+            axis=1,
+        )
+    ]
+
+    prediction_probability_agreement = (
+        predicted_array
+        == probability_predictions
+    )
+
+    prediction_probability_mismatch_count = int(
+        np.sum(
+            ~prediction_probability_agreement
+        )
+    )
 
     (
         precision,
@@ -583,6 +577,21 @@ def calculate_classification_metrics(
                 ),
             )
         ),
+        "predict_probability_argmax_agreement": (
+            ensure_finite_metric(
+                (
+                    "predict_probability_"
+                    "argmax_agreement"
+                ),
+                (
+                    prediction_probability_agreement
+                    .mean()
+                ),
+            )
+        ),
+        "predict_probability_argmax_mismatch_count": (
+            prediction_probability_mismatch_count
+        ),
         "mean_prediction_confidence": (
             ensure_finite_metric(
                 "mean_prediction_confidence",
@@ -726,6 +735,26 @@ def build_prediction_frame(
         for name, encoded in class_items
     }
 
+    class_labels = np.asarray(
+        [
+            encoded
+            for _, encoded in class_items
+        ],
+        dtype=int,
+    )
+
+    probability_predictions = class_labels[
+        np.argmax(
+            probability_array,
+            axis=1,
+        )
+    ]
+
+    prediction_probability_agreement = (
+        predicted_array
+        == probability_predictions
+    )
+
     confidence = probability_array.max(
         axis=1
     )
@@ -813,6 +842,19 @@ def build_prediction_frame(
         encoded_to_name[int(value)]
         for value in predicted_array
     ]
+
+    output[
+        "probability_argmax_label_encoded"
+    ] = probability_predictions
+
+    output["probability_argmax_label"] = [
+        encoded_to_name[int(value)]
+        for value in probability_predictions
+    ]
+
+    output[
+        "predict_probability_argmax_agree"
+    ] = prediction_probability_agreement
 
     output["is_correct"] = (
         true_array == predicted_array

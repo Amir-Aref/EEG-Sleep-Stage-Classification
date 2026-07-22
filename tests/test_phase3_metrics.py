@@ -199,25 +199,25 @@ class Phase3MetricsTests(unittest.TestCase):
                 class_mapping=CLASS_MAPPING,
             )
 
-    def test_prediction_probability_mismatch_is_rejected(
+    def test_probability_argmax_tie_is_audited_not_rejected(
         self,
     ) -> None:
         y_true = np.array(
-            [0, 1]
+            [3, 1]
         )
 
         y_pred = np.array(
-            [1, 1]
+            [3, 1]
         )
 
         probabilities = np.array(
             [
                 [
-                    0.9,
-                    0.025,
-                    0.025,
-                    0.025,
-                    0.025,
+                    0.5,
+                    0.0,
+                    0.0,
+                    0.5,
+                    0.0,
                 ],
                 [
                     0.025,
@@ -229,16 +229,58 @@ class Phase3MetricsTests(unittest.TestCase):
             ]
         )
 
-        with self.assertRaisesRegex(
-            ValueError,
-            "maximum-probability",
-        ):
-            validate_prediction_contract(
-                y_true=y_true,
-                y_pred=y_pred,
-                probabilities=probabilities,
-                class_mapping=CLASS_MAPPING,
-            )
+        (
+            normalized_true,
+            normalized_predicted,
+            normalized_probabilities,
+        ) = validate_prediction_contract(
+            y_true=y_true,
+            y_pred=y_pred,
+            probabilities=probabilities,
+            class_mapping=CLASS_MAPPING,
+        )
+
+        np.testing.assert_array_equal(
+            normalized_true,
+            y_true,
+        )
+
+        np.testing.assert_array_equal(
+            normalized_predicted,
+            y_pred,
+        )
+
+        np.testing.assert_allclose(
+            normalized_probabilities,
+            probabilities,
+        )
+
+        metrics = calculate_classification_metrics(
+            y_true=y_true,
+            y_pred=y_pred,
+            probabilities=probabilities,
+            class_mapping=CLASS_MAPPING,
+        )
+
+        self.assertEqual(
+            metrics[
+                (
+                    "predict_probability_"
+                    "argmax_mismatch_count"
+                )
+            ],
+            1,
+        )
+
+        self.assertEqual(
+            metrics[
+                (
+                    "predict_probability_"
+                    "argmax_agreement"
+                )
+            ],
+            0.5,
+        )
 
     def test_perfect_predictions_have_perfect_core_metrics(
         self,
@@ -341,6 +383,10 @@ class Phase3MetricsTests(unittest.TestCase):
             "weighted_f1",
             "cohen_kappa",
             "multiclass_log_loss",
+            (
+                "predict_probability_"
+                "argmax_agreement"
+            ),
             "mean_prediction_confidence",
             "mean_prediction_margin",
             "mean_normalized_entropy",
@@ -396,6 +442,9 @@ class Phase3MetricsTests(unittest.TestCase):
             "true_label",
             "predicted_label_encoded",
             "predicted_label",
+            "probability_argmax_label_encoded",
+            "probability_argmax_label",
+            "predict_probability_argmax_agree",
             "is_correct",
             "prediction_confidence",
             "prediction_margin",
@@ -437,6 +486,15 @@ class Phase3MetricsTests(unittest.TestCase):
                     y_true == y_pred
                 )
             ),
+        )
+
+        self.assertTrue(
+            frame[
+                (
+                    "predict_probability_"
+                    "argmax_agree"
+                )
+            ].all()
         )
 
     def test_mismatched_identifier_count_is_rejected(
