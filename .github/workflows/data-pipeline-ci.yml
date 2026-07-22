@@ -1,22 +1,51 @@
-name: Data Pipeline Cl
+name: Data Pipeline CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
-  pipeline-check:
+  phase2-contracts:
+    name: Phase 2 contracts
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      MPLBACKEND: Agg
+      PYTHONUTF8: "1"
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.12'
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-    - name: Run data pipeline
-      run: python pipeline.py
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify scientific dependencies
+        run: |
+          python -c "import mne; print('MNE:', mne.__version__)"
+          python -c "import numpy, pandas, scipy, sklearn; print('Scientific imports: PASS')"
+          python -c "import matplotlib, seaborn, sqlalchemy, joblib; print('Project imports: PASS')"
+
+      - name: Compile Python sources
+        run: python -m compileall -q pipeline.py scripts tests
+
+      - name: Run Phase 2 contracts
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Validate portable pipeline plan
+        run: python scripts/run_phase2_pipeline.py --plan
