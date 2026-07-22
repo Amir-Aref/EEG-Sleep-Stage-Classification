@@ -115,6 +115,26 @@ FEATURE_EXTRACTION_SUMMARY_PATH: Final[Path] = (
     / "sleep_edfx_feature_extraction_summary.csv"
 )
 
+FEATURE_AUDIT_REPORT_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_feature_audit.json"
+)
+
+HIGH_CORRELATION_PAIRS_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_high_correlation_pairs.csv"
+)
+
+STAGE_FEATURE_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_stage_feature_summary.csv"
+)
+
+SUBJECT_FEATURE_SUMMARY_PATH: Final[Path] = (
+    DATA_METADATA_DIR
+    / "sleep_edfx_subject_feature_summary.csv"
+)
+
 EEG_FILTER_LOW_HZ: Final[float] = 0.3
 EEG_FILTER_HIGH_HZ: Final[float] = 35.0
 WELCH_WINDOW_SECONDS: Final[float] = 4.0

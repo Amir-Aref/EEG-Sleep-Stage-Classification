@@ -1,0 +1,40 @@
+{
+  "row_count": 3921,
+  "column_count": 54,
+  "feature_count": 35,
+  "recording_count": 4,
+  "subject_count": 4,
+  "constant_features": [],
+  "high_correlation_threshold": 0.995,
+  "high_correlation_pair_count": 17,
+  "deterministic_relationships": {
+    "rms_squared_equals_mean_square": {
+      "maximum_normalized_error": 8.94581370143755e-16,
+      "passes": true
+    },
+    "energy_equals_mean_square_times_samples": {
+      "maximum_normalized_error": 5.804167777664234e-16,
+      "passes": true
+    },
+    "hjorth_activity_equals_std_squared": {
+      "maximum_normalized_error": 8.300869313544057e-16,
+      "passes": true
+    },
+    "total_power_equals_band_sum": {
+      "maximum_normalized_error": 6.382308964365602e-16,
+      "passes": true
+    },
+    "relative_power_sum_equals_one": {
+      "maximum_normalized_error": 5.551115123125783e-16,
+      "passes": true
+    }
+  },
+  "class_distribution": {
+    "Wake": 613,
+    "N1": 322,
+    "N2": 1842,
+    "N3": 477,
+    "REM": 667
+  },
+  "quality_issue_count": 0
+}
