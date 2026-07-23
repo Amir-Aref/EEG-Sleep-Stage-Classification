@@ -31,6 +31,7 @@ from scripts.database_connection import (
 from scripts.phase3_metrics import (
     probability_column_name,
     validate_and_normalize_probabilities,
+    write_prediction_csv,
 )
 
 
@@ -82,6 +83,11 @@ OPTIONAL_PREDICTION_COLUMNS = (
 )
 
 
+MAX_PREDICTION_ENTROPY = math.log(
+    len(CLASS_NAMES)
+)
+
+
 CREATE_PREDICTION_RUNS_TABLE = """
 CREATE TABLE IF NOT EXISTS prediction_runs (
     run_id TEXT PRIMARY KEY,
@@ -117,7 +123,7 @@ CREATE TABLE IF NOT EXISTS prediction_runs (
 """
 
 
-CREATE_PREDICTION_ROWS_TABLE = """
+CREATE_PREDICTION_ROWS_TABLE = f"""
 CREATE TABLE IF NOT EXISTS prediction_rows (
     run_id TEXT NOT NULL,
     row_position INTEGER NOT NULL
@@ -156,7 +162,7 @@ CREATE TABLE IF NOT EXISTS prediction_rows (
     prediction_entropy REAL NOT NULL
         CHECK (
             prediction_entropy >= 0.0
-            AND prediction_entropy <= 1.6094379124341003
+            AND prediction_entropy <= {MAX_PREDICTION_ENTROPY:.17g}
         ),
 
     prediction_normalized_entropy REAL NOT NULL
@@ -303,6 +309,44 @@ def normalize_scalar(
         return None
 
     return value
+
+
+def clamp_unit_interval(
+    value: Any,
+) -> float:
+    numeric = float(value)
+
+    if not math.isfinite(numeric):
+        raise ValueError(
+            "Unit-interval value must be finite."
+        )
+
+    return float(
+        np.clip(
+            numeric,
+            0.0,
+            1.0,
+        )
+    )
+
+
+def clamp_prediction_entropy(
+    value: Any,
+) -> float:
+    numeric = float(value)
+
+    if not math.isfinite(numeric):
+        raise ValueError(
+            "Prediction entropy must be finite."
+        )
+
+    return float(
+        np.clip(
+            numeric,
+            0.0,
+            MAX_PREDICTION_ENTROPY,
+        )
+    )
 
 
 def validate_class_mapping(
@@ -810,15 +854,20 @@ def validate_prediction_frame(
 def prediction_frame_sha256(
     predictions: pd.DataFrame,
 ) -> str:
-    serialized = predictions.to_csv(
-        index=False,
-        lineterminator="\n",
-        float_format="%.17g",
-    ).encode("utf-8")
+    with tempfile.TemporaryDirectory() as directory:
+        canonical_path = (
+            Path(directory)
+            / "predictions.csv"
+        )
 
-    return sha256_bytes(
-        serialized
-    )
+        write_prediction_csv(
+            predictions=predictions,
+            output_path=canonical_path,
+        )
+
+        return sha256_bytes(
+            canonical_path.read_bytes()
+        )
 
 
 def build_run_fingerprint(
@@ -967,45 +1016,39 @@ def prediction_rows_for_insert(
                         ]
                     )
                 ),
-                float(
+                clamp_unit_interval(
                     row[
                         "prediction_confidence"
                     ]
                 ),
-                float(
+                clamp_unit_interval(
                     row[
                         "prediction_margin"
                     ]
                 ),
-                float(
-                    max(
-                        0.0,
-                        row[
-                            "prediction_entropy"
-                        ],
-                    )
+                clamp_prediction_entropy(
+                    row[
+                        "prediction_entropy"
+                    ]
                 ),
-                float(
-                    max(
-                        0.0,
-                        row[
-                            "prediction_normalized_entropy"
-                        ],
-                    )
+                clamp_unit_interval(
+                    row[
+                        "prediction_normalized_entropy"
+                    ]
                 ),
-                float(
+                clamp_unit_interval(
                     row["probability_wake"]
                 ),
-                float(
+                clamp_unit_interval(
                     row["probability_n1"]
                 ),
-                float(
+                clamp_unit_interval(
                     row["probability_n2"]
                 ),
-                float(
+                clamp_unit_interval(
                     row["probability_n3"]
                 ),
-                float(
+                clamp_unit_interval(
                     row["probability_rem"]
                 ),
                 (

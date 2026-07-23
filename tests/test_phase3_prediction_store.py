@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import sqlite3
 import subprocess
 import sys
@@ -9,11 +10,16 @@ from pathlib import Path
 
 import numpy as np
 
+from scripts.phase3_metrics import (
+    write_prediction_csv,
+)
 from scripts.phase3_prediction_store import (
     audit_prediction_database,
     persist_prediction_run,
+    prediction_frame_sha256,
     read_prediction_run,
     setup_prediction_database,
+    sha256_bytes,
     synthetic_prediction_frame,
 )
 
@@ -345,6 +351,270 @@ class Phase3PredictionStoreTests(
         self.assertEqual(
             rows["is_correct"].tolist(),
             [1, 0],
+        )
+
+    def test_prediction_hash_uses_canonical_csv_serialization(
+        self,
+    ) -> None:
+        first = synthetic_prediction_frame()
+
+        second = first.copy()
+
+        epsilon = np.finfo(float).eps
+
+        second.loc[
+            0,
+            "probability_wake",
+        ] += epsilon
+
+        second.loc[
+            0,
+            "probability_n1",
+        ] -= epsilon
+
+        probability_columns = [
+            "probability_wake",
+            "probability_n1",
+            "probability_n2",
+            "probability_n3",
+            "probability_rem",
+        ]
+
+        probabilities = second.loc[
+            0,
+            probability_columns,
+        ].to_numpy(
+            dtype=float
+        )
+
+        sorted_probabilities = np.sort(
+            probabilities
+        )
+
+        entropy = -np.sum(
+            probabilities
+            * np.log(
+                np.clip(
+                    probabilities,
+                    np.finfo(float).tiny,
+                    1.0,
+                )
+            )
+        )
+
+        second.loc[
+            0,
+            "prediction_confidence",
+        ] = sorted_probabilities[-1]
+
+        second.loc[
+            0,
+            "prediction_margin",
+        ] = (
+            sorted_probabilities[-1]
+            - sorted_probabilities[-2]
+        )
+
+        second.loc[
+            0,
+            "prediction_entropy",
+        ] = entropy
+
+        second.loc[
+            0,
+            "prediction_normalized_entropy",
+        ] = entropy / math.log(5)
+
+        material_change = first.copy()
+
+        material_change.loc[
+            0,
+            "prediction_confidence",
+        ] += 1e-6
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            first_path = (
+                root / "first.csv"
+            )
+
+            second_path = (
+                root / "second.csv"
+            )
+
+            write_prediction_csv(
+                predictions=first,
+                output_path=first_path,
+            )
+
+            write_prediction_csv(
+                predictions=second,
+                output_path=second_path,
+            )
+
+            first_bytes = (
+                first_path.read_bytes()
+            )
+
+            second_bytes = (
+                second_path.read_bytes()
+            )
+
+        self.assertEqual(
+            first_bytes,
+            second_bytes,
+        )
+
+        first_hash = (
+            prediction_frame_sha256(
+                first
+            )
+        )
+
+        second_hash = (
+            prediction_frame_sha256(
+                second
+            )
+        )
+
+        self.assertEqual(
+            first_hash,
+            sha256_bytes(
+                first_bytes
+            ),
+        )
+
+        self.assertEqual(
+            second_hash,
+            sha256_bytes(
+                second_bytes
+            ),
+        )
+
+        self.assertEqual(
+            first_hash,
+            second_hash,
+        )
+
+        self.assertNotEqual(
+            first_hash,
+            prediction_frame_sha256(
+                material_change
+            ),
+        )
+
+    def test_maximum_entropy_respects_sql_boundary(
+        self,
+    ) -> None:
+        predictions = (
+            synthetic_prediction_frame()
+            .iloc[[0]]
+            .reset_index(drop=True)
+        )
+
+        probabilities = np.full(
+            5,
+            0.2,
+            dtype=float,
+        )
+
+        entropy = -np.sum(
+            probabilities
+            * np.log(probabilities)
+        )
+
+        predictions.loc[
+            0,
+            [
+                "probability_wake",
+                "probability_n1",
+                "probability_n2",
+                "probability_n3",
+                "probability_rem",
+            ],
+        ] = probabilities
+
+        predictions.loc[
+            0,
+            "predicted_label_encoded",
+        ] = 0
+
+        predictions.loc[
+            0,
+            "predicted_label",
+        ] = "Wake"
+
+        predictions.loc[
+            0,
+            "probability_argmax_label_encoded",
+        ] = 0
+
+        predictions.loc[
+            0,
+            "probability_argmax_label",
+        ] = "Wake"
+
+        predictions.loc[
+            0,
+            "predict_probability_argmax_agree",
+        ] = True
+
+        predictions.loc[
+            0,
+            "prediction_confidence",
+        ] = 0.2
+
+        predictions.loc[
+            0,
+            "prediction_margin",
+        ] = 0.0
+
+        predictions.loc[
+            0,
+            "prediction_entropy",
+        ] = entropy
+
+        predictions.loc[
+            0,
+            "prediction_normalized_entropy",
+        ] = entropy / math.log(5)
+
+        with tempfile.TemporaryDirectory() as directory:
+            database_path = (
+                Path(directory)
+                / "predictions.sqlite3"
+            )
+
+            result = persist_prediction_run(
+                database_path=database_path,
+                run_metadata=valid_metadata(),
+                predictions=predictions,
+            )
+
+            _, rows = read_prediction_run(
+                database_path=database_path,
+                run_id=result.run_id,
+            )
+
+        self.assertTrue(
+            result.inserted
+        )
+
+        self.assertLessEqual(
+            rows.loc[
+                0,
+                "prediction_entropy",
+            ],
+            math.log(5),
+        )
+
+        self.assertLessEqual(
+            rows.loc[
+                0,
+                "prediction_normalized_entropy",
+            ],
+            1.0,
         )
 
     def test_foreign_key_cascade_removes_rows(
