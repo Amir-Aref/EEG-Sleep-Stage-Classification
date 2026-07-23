@@ -21,6 +21,12 @@ from scripts.run_provenance import (
     sha256_file,
     validate_run_manifest,
     write_run_manifest,
+    fail_run_manifest,
+    fail_step_manifest,
+    start_run_manifest,
+    start_step_manifest,
+    succeed_run_manifest,
+    succeed_step_manifest,
 )
 
 
@@ -497,6 +503,382 @@ class RunProvenanceTests(unittest.TestCase):
                 dirty_snapshot[
                     "status_entries"
                 ]
+            )
+
+
+
+    def test_successful_run_lifecycle(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        self.assertEqual(
+            manifest["status"],
+            "running",
+        )
+
+        first_start = datetime(
+            2026,
+            7,
+            24,
+            1,
+            2,
+            4,
+            tzinfo=timezone.utc,
+        )
+
+        first_finish = datetime(
+            2026,
+            7,
+            24,
+            1,
+            2,
+            5,
+            tzinfo=timezone.utc,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=1,
+            started_at=first_start,
+        )
+
+        manifest = succeed_step_manifest(
+            manifest,
+            position=1,
+            finished_at=first_finish,
+            duration_seconds=1.25,
+        )
+
+        second_start = datetime(
+            2026,
+            7,
+            24,
+            1,
+            2,
+            6,
+            tzinfo=timezone.utc,
+        )
+
+        second_finish = datetime(
+            2026,
+            7,
+            24,
+            1,
+            2,
+            7,
+            tzinfo=timezone.utc,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=2,
+            started_at=second_start,
+        )
+
+        manifest = succeed_step_manifest(
+            manifest,
+            position=2,
+            finished_at=second_finish,
+            duration_seconds=0.75,
+        )
+
+        manifest = succeed_run_manifest(
+            manifest,
+            finished_at=second_finish,
+            duration_seconds=3.0,
+        )
+
+        validate_run_manifest(
+            manifest
+        )
+
+        self.assertEqual(
+            manifest["status"],
+            "succeeded",
+        )
+
+        self.assertEqual(
+            [
+                step["status"]
+                for step in manifest["steps"]
+            ],
+            [
+                "succeeded",
+                "succeeded",
+            ],
+        )
+
+        self.assertEqual(
+            [
+                step["return_code"]
+                for step in manifest["steps"]
+            ],
+            [
+                0,
+                0,
+            ],
+        )
+
+    def test_steps_must_start_in_order(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "must start in order",
+        ):
+            start_step_manifest(
+                manifest,
+                position=2,
+                started_at=FIXED_TIME,
+            )
+
+    def test_run_cannot_succeed_with_pending_steps(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "incomplete steps",
+        ):
+            succeed_run_manifest(
+                manifest,
+                finished_at=FIXED_TIME,
+                duration_seconds=0.0,
+            )
+
+    def test_failed_step_and_run_capture_error(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=1,
+            started_at=FIXED_TIME,
+        )
+
+        step_error = {
+            "type": "CalledProcessError",
+            "message": "Feature extraction failed.",
+            "command": [
+                "<PYTHON>",
+                "-m",
+                "scripts.extract_eeg_features",
+            ],
+        }
+
+        manifest = fail_step_manifest(
+            manifest,
+            position=1,
+            return_code=9,
+            error=step_error,
+            finished_at=FIXED_TIME,
+            duration_seconds=2.5,
+        )
+
+        run_error = {
+            "type": "PipelineStepError",
+            "message": (
+                "Pipeline stopped after step 1."
+            ),
+            "failed_step_position": 1,
+        }
+
+        manifest = fail_run_manifest(
+            manifest,
+            error=run_error,
+            finished_at=FIXED_TIME,
+            duration_seconds=2.5,
+        )
+
+        validate_run_manifest(
+            manifest
+        )
+
+        self.assertEqual(
+            manifest["status"],
+            "failed",
+        )
+
+        self.assertEqual(
+            manifest["steps"][0]["status"],
+            "failed",
+        )
+
+        self.assertEqual(
+            manifest["steps"][0]["return_code"],
+            9,
+        )
+
+        self.assertEqual(
+            manifest["steps"][1]["status"],
+            "pending",
+        )
+
+        self.assertEqual(
+            manifest["error"],
+            run_error,
+        )
+
+    def test_failed_step_rejects_zero_return_code(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=1,
+            started_at=FIXED_TIME,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "return code zero",
+        ):
+            fail_step_manifest(
+                manifest,
+                position=1,
+                return_code=0,
+                error={
+                    "type": "Error",
+                    "message": "failure",
+                },
+                finished_at=FIXED_TIME,
+                duration_seconds=1.0,
+            )
+
+    def test_plan_manifest_cannot_start(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=True
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Plan-mode",
+        ):
+            start_run_manifest(
+                manifest,
+                started_at=FIXED_TIME,
+            )
+
+    def test_negative_duration_is_rejected(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=1,
+            started_at=FIXED_TIME,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "must not be negative",
+        ):
+            succeed_step_manifest(
+                manifest,
+                position=1,
+                finished_at=FIXED_TIME,
+                duration_seconds=-0.1,
+            )
+
+    def test_lifecycle_manifest_roundtrip(
+        self,
+    ) -> None:
+        manifest = self.create_sample_manifest(
+            plan_mode=False
+        )
+
+        manifest = start_run_manifest(
+            manifest,
+            started_at=FIXED_TIME,
+        )
+
+        manifest = start_step_manifest(
+            manifest,
+            position=1,
+            started_at=FIXED_TIME,
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = (
+                Path(directory)
+                / "running_manifest.json"
+            )
+
+            write_run_manifest(
+                manifest,
+                path,
+            )
+
+            loaded = json.loads(
+                path.read_text(
+                    encoding="utf-8"
+                )
+            )
+
+            self.assertEqual(
+                loaded,
+                manifest,
+            )
+
+            self.assertEqual(
+                loaded["status"],
+                "running",
+            )
+
+            self.assertEqual(
+                loaded["steps"][0]["status"],
+                "running",
             )
 
 

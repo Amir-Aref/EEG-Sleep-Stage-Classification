@@ -936,6 +936,488 @@ def validate_run_manifest(
             )
 
 
+
+def _mutable_manifest_copy(
+    manifest: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Create a validated mutable copy of one run manifest."""
+
+    validate_run_manifest(
+        manifest
+    )
+
+    normalized = normalize_json_value(
+        manifest
+    )
+
+    if not isinstance(
+        normalized,
+        dict,
+    ):
+        raise TypeError(
+            "Run manifest must normalize to a dictionary."
+        )
+
+    return normalized
+
+
+def _validate_duration_seconds(
+    value: float,
+) -> float:
+    """Validate and normalize a measured duration."""
+
+    if isinstance(value, bool) or not isinstance(
+        value,
+        (
+            int,
+            float,
+        ),
+    ):
+        raise TypeError(
+            "Duration must be a numeric value."
+        )
+
+    duration = float(value)
+
+    if not math.isfinite(duration):
+        raise ValueError(
+            "Duration must be finite."
+        )
+
+    if duration < 0:
+        raise ValueError(
+            "Duration must not be negative."
+        )
+
+    return duration
+
+
+def _step_index(
+    manifest: Mapping[str, Any],
+    position: int,
+) -> int:
+    """Resolve a one-based pipeline position to its list index."""
+
+    if isinstance(position, bool) or not isinstance(
+        position,
+        int,
+    ):
+        raise TypeError(
+            "Step position must be an integer."
+        )
+
+    if position <= 0:
+        raise ValueError(
+            "Step position must be positive."
+        )
+
+    steps = manifest.get(
+        "steps"
+    )
+
+    if not isinstance(
+        steps,
+        list,
+    ):
+        raise ValueError(
+            "Run manifest has no execution-step list."
+        )
+
+    index = position - 1
+
+    if index >= len(steps):
+        raise IndexError(
+            f"Unknown pipeline step position: {position}"
+        )
+
+    return index
+
+
+def _normalize_error_payload(
+    error: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate a structured run or step error payload."""
+
+    normalized = normalize_json_value(
+        error
+    )
+
+    if not isinstance(
+        normalized,
+        dict,
+    ) or not normalized:
+        raise ValueError(
+            "Error payload must be a non-empty mapping."
+        )
+
+    error_type = normalized.get(
+        "type"
+    )
+
+    message = normalized.get(
+        "message"
+    )
+
+    if not isinstance(
+        error_type,
+        str,
+    ) or not error_type.strip():
+        raise ValueError(
+            "Error payload must contain a non-empty type."
+        )
+
+    if not isinstance(
+        message,
+        str,
+    ) or not message.strip():
+        raise ValueError(
+            "Error payload must contain a non-empty message."
+        )
+
+    return normalized
+
+
+def start_run_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    started_at: datetime | None = None,
+) -> dict[str, Any]:
+    """Transition a non-plan run from pending to running."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["plan_mode"]:
+        raise ValueError(
+            "Plan-mode manifests cannot be started."
+        )
+
+    if updated["status"] != "pending":
+        raise ValueError(
+            "Only pending runs can be started."
+        )
+
+    if started_at is None:
+        started_at = utc_now()
+
+    updated["status"] = "running"
+    updated["started_at_utc"] = (
+        isoformat_utc(started_at)
+    )
+    updated["finished_at_utc"] = None
+    updated["duration_seconds"] = None
+    updated["error"] = None
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
+def start_step_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    position: int,
+    started_at: datetime | None = None,
+) -> dict[str, Any]:
+    """Transition the next pending step to running."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["status"] != "running":
+        raise ValueError(
+            "A step can start only while its run is running."
+        )
+
+    index = _step_index(
+        updated,
+        position,
+    )
+
+    steps = updated["steps"]
+    step = steps[index]
+
+    if step["status"] != "pending":
+        raise ValueError(
+            "Only pending steps can be started."
+        )
+
+    previous_statuses = [
+        previous["status"]
+        for previous in steps[:index]
+    ]
+
+    if any(
+        status not in {
+            "succeeded",
+            "skipped",
+        }
+        for status in previous_statuses
+    ):
+        raise ValueError(
+            "Pipeline steps must start in order."
+        )
+
+    if any(
+        following["status"] != "pending"
+        for following in steps[
+            index + 1 :
+        ]
+    ):
+        raise ValueError(
+            "Later pipeline steps must remain pending."
+        )
+
+    if started_at is None:
+        started_at = utc_now()
+
+    step["status"] = "running"
+    step["started_at_utc"] = (
+        isoformat_utc(started_at)
+    )
+    step["finished_at_utc"] = None
+    step["duration_seconds"] = None
+    step["return_code"] = None
+    step["error"] = None
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
+def succeed_step_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    position: int,
+    finished_at: datetime | None = None,
+    duration_seconds: float,
+) -> dict[str, Any]:
+    """Mark one running step as successfully completed."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["status"] != "running":
+        raise ValueError(
+            "A step can succeed only while its run is running."
+        )
+
+    index = _step_index(
+        updated,
+        position,
+    )
+
+    step = updated["steps"][index]
+
+    if step["status"] != "running":
+        raise ValueError(
+            "Only a running step can succeed."
+        )
+
+    if finished_at is None:
+        finished_at = utc_now()
+
+    step["status"] = "succeeded"
+    step["finished_at_utc"] = (
+        isoformat_utc(finished_at)
+    )
+    step["duration_seconds"] = (
+        _validate_duration_seconds(
+            duration_seconds
+        )
+    )
+    step["return_code"] = 0
+    step["error"] = None
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
+def fail_step_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    position: int,
+    return_code: int,
+    error: Mapping[str, Any],
+    finished_at: datetime | None = None,
+    duration_seconds: float,
+) -> dict[str, Any]:
+    """Mark one running step as failed."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["status"] != "running":
+        raise ValueError(
+            "A step can fail only while its run is running."
+        )
+
+    if isinstance(return_code, bool) or not isinstance(
+        return_code,
+        int,
+    ):
+        raise TypeError(
+            "Step return code must be an integer."
+        )
+
+    if return_code == 0:
+        raise ValueError(
+            "A failed step cannot have return code zero."
+        )
+
+    index = _step_index(
+        updated,
+        position,
+    )
+
+    step = updated["steps"][index]
+
+    if step["status"] != "running":
+        raise ValueError(
+            "Only a running step can fail."
+        )
+
+    if finished_at is None:
+        finished_at = utc_now()
+
+    step["status"] = "failed"
+    step["finished_at_utc"] = (
+        isoformat_utc(finished_at)
+    )
+    step["duration_seconds"] = (
+        _validate_duration_seconds(
+            duration_seconds
+        )
+    )
+    step["return_code"] = return_code
+    step["error"] = (
+        _normalize_error_payload(
+            error
+        )
+    )
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
+def succeed_run_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    finished_at: datetime | None = None,
+    duration_seconds: float,
+) -> dict[str, Any]:
+    """Mark a running run as successfully completed."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["status"] != "running":
+        raise ValueError(
+            "Only a running run can succeed."
+        )
+
+    incomplete_steps = [
+        step["position"]
+        for step in updated["steps"]
+        if step["status"] not in {
+            "succeeded",
+            "skipped",
+        }
+    ]
+
+    if incomplete_steps:
+        raise ValueError(
+            "Run cannot succeed with incomplete steps: "
+            f"{incomplete_steps}"
+        )
+
+    if finished_at is None:
+        finished_at = utc_now()
+
+    updated["status"] = "succeeded"
+    updated["finished_at_utc"] = (
+        isoformat_utc(finished_at)
+    )
+    updated["duration_seconds"] = (
+        _validate_duration_seconds(
+            duration_seconds
+        )
+    )
+    updated["error"] = None
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
+def fail_run_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    error: Mapping[str, Any],
+    finished_at: datetime | None = None,
+    duration_seconds: float,
+) -> dict[str, Any]:
+    """Mark a pending or running run as failed."""
+
+    updated = _mutable_manifest_copy(
+        manifest
+    )
+
+    if updated["plan_mode"]:
+        raise ValueError(
+            "Plan-mode manifests cannot fail execution."
+        )
+
+    if updated["status"] not in {
+        "pending",
+        "running",
+    }:
+        raise ValueError(
+            "Only pending or running runs can fail."
+        )
+
+    if finished_at is None:
+        finished_at = utc_now()
+
+    updated["status"] = "failed"
+    updated["finished_at_utc"] = (
+        isoformat_utc(finished_at)
+    )
+    updated["duration_seconds"] = (
+        _validate_duration_seconds(
+            duration_seconds
+        )
+    )
+    updated["error"] = (
+        _normalize_error_payload(
+            error
+        )
+    )
+
+    validate_run_manifest(
+        updated
+    )
+
+    return updated
+
+
 def write_run_manifest(
     manifest: Mapping[str, Any],
     output_path: Path,
