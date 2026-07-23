@@ -1,0 +1,74 @@
+{
+  "artifact_type": "phase3_local_final_refit_manifest",
+  "candidate_space_complete": true,
+  "deployment": {
+    "block_reason": "The local engineering dataset contains four subjects and does not satisfy the five-outer-fold full scientific protocol.",
+    "deployment_ready": false,
+    "inference_ready": true
+  },
+  "intended_use": "local_engineering_inference",
+  "model_count": 1,
+  "models": [
+    {
+      "candidate_id": "extra_trees__candidate_007",
+      "candidate_parameters": {
+        "classifier__max_depth": 12,
+        "classifier__max_features": 0.5,
+        "classifier__min_samples_leaf": 1
+      },
+      "deployment_ready": false,
+      "feature_count": 28,
+      "inference_ready": true,
+      "model_file_path": "artifacts/models/phase3_local_final_refit/phase3_local_final_refit.joblib",
+      "model_file_sha256": "17339c066fc78f8c3329a456299c5ef558138e480071ef533f35e98f79bc7c0a",
+      "model_file_size_bytes": 9277073,
+      "model_name": "extra_trees",
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "scientific_reporting_allowed": false,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7779158679843154,
+        "mean_balanced_accuracy": 0.694242230129456,
+        "mean_cohen_kappa": 0.6824054664931987,
+        "mean_macro_f1": 0.6804523743987437,
+        "mean_multiclass_log_loss": 0.5896924808062068,
+        "mean_weighted_f1": 0.7762099072707784,
+        "std_accuracy": 0.022354901610105955,
+        "std_balanced_accuracy": 0.03875216942349736,
+        "std_cohen_kappa": 0.01969569107488393,
+        "std_macro_f1": 0.038093577989501685,
+        "std_multiclass_log_loss": 0.03211892147965077,
+        "std_weighted_f1": 0.03291335494550607
+      },
+      "training_row_count": 3921,
+      "training_subjects": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "validation_fold_count": 4
+    }
+  ],
+  "runtime": {
+    "joblib": "1.5.3",
+    "numpy": "2.5.1",
+    "pandas": "3.0.3",
+    "python": "3.13.9",
+    "scikit_learn": "1.9.0"
+  },
+  "schema_version": "1.0.0",
+  "scientific_reporting_allowed": false,
+  "source": {
+    "evaluation_protocol_path": "config/phase3_evaluation_protocol.json",
+    "evaluation_protocol_sha256": "efba77bc73bcc1c239f99a6c9d7ec06da152b7b327666f72abec972b91454269",
+    "model_input_path": "data/processed/sleep_edfx_model_input.csv",
+    "model_input_sha256": "88856c165c2eef2c554325c2ef9fe9e843572077596af0ab344ecd844021c0c0",
+    "model_registry_path": "config/phase3_model_registry.json",
+    "model_registry_sha256": "a011d08b9d9048232d8ef0862be2c4d1706650c737d3a9218102fdc3340ade27",
+    "model_schema_path": "data/metadata/sleep_edfx_model_feature_schema.json",
+    "model_schema_sha256": "df83f4f4a486128ea6ec89809ee4d31a5bd0812452b12c7cb5a4ecf583de85fc",
+    "selection_artifact_path": "data/metadata/phase3_local_final_refit_selection.json",
+    "selection_artifact_sha256": "72f26c9a05a1c48b67d634483737076de8c948b2a97fcfa3832da06171631cf7"
+  }
+}
