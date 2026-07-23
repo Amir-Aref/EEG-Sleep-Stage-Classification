@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import copy
 import subprocess
@@ -43,9 +43,16 @@ class Phase3FinalRefitTests(
     def setUpClass(
         cls,
     ) -> None:
-        cls.bundle = (
-            load_phase3_dataset()
-        )
+        try:
+            cls.bundle = (
+                load_phase3_dataset()
+            )
+        except FileNotFoundError as error:
+            raise unittest.SkipTest(
+                "Local Phase 3 model-input artifacts "
+                "are not available in this environment: "
+                f"{error}"
+            ) from error
 
         cls.registry = (
             load_registry(
