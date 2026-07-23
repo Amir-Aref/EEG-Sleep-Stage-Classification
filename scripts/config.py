@@ -7,6 +7,8 @@ paths or label mappings independently.
 
 from __future__ import annotations
 
+import os
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Final
 
@@ -17,25 +19,85 @@ from typing import Final
 
 PROJECT_ROOT: Final[Path] = Path(__file__).resolve().parents[1]
 
+RUNTIME_ROOT_ENV: Final[str] = "EEG_RUNTIME_ROOT"
+SLEEP_EDFX_RAW_DIR_ENV: Final[str] = "EEG_SLEEP_EDFX_RAW_DIR"
+
+
+def environment_variable_is_set(
+    variable_name: str,
+    *,
+    environ: Mapping[str, str] | None = None,
+) -> bool:
+    """Return whether a non-empty path override is configured."""
+
+    source = os.environ if environ is None else environ
+    value = source.get(variable_name)
+
+    return bool(
+        value is not None
+        and value.strip()
+    )
+
+
+def resolve_environment_path(
+    variable_name: str,
+    default: Path,
+    *,
+    environ: Mapping[str, str] | None = None,
+    project_root: Path = PROJECT_ROOT,
+) -> Path:
+    """Resolve one optional environment path deterministically.
+
+    Absolute overrides are used directly. Relative overrides are
+    interpreted relative to the immutable project/code root.
+    """
+
+    source = os.environ if environ is None else environ
+    raw_value = source.get(variable_name)
+
+    if raw_value is None or not raw_value.strip():
+        return default.expanduser().resolve()
+
+    configured_path = Path(
+        raw_value.strip()
+    ).expanduser()
+
+    if not configured_path.is_absolute():
+        configured_path = (
+            project_root
+            / configured_path
+        )
+
+    return configured_path.resolve()
+
+
+RUNTIME_ROOT: Final[Path] = resolve_environment_path(
+    RUNTIME_ROOT_ENV,
+    PROJECT_ROOT,
+)
+
 SCRIPTS_DIR: Final[Path] = PROJECT_ROOT / "scripts"
 
-DATA_DIR: Final[Path] = PROJECT_ROOT / "data"
+DATA_DIR: Final[Path] = RUNTIME_ROOT / "data"
 RAW_DATA_DIR: Final[Path] = DATA_DIR / "raw"
 INTERIM_DATA_DIR: Final[Path] = DATA_DIR / "interim"
 PROCESSED_DATA_DIR: Final[Path] = DATA_DIR / "processed"
 SAMPLE_DATA_DIR: Final[Path] = DATA_DIR / "sample"
 DATA_METADATA_DIR: Final[Path] = DATA_DIR / "metadata"
 
-DATABASE_DIR: Final[Path] = PROJECT_ROOT / "database"
+DATABASE_DIR: Final[Path] = RUNTIME_ROOT / "database"
 DATABASE_PATH: Final[Path] = DATABASE_DIR / "sleep_eeg.db"
 
-OUTPUTS_DIR: Final[Path] = PROJECT_ROOT / "outputs"
+OUTPUTS_DIR: Final[Path] = RUNTIME_ROOT / "outputs"
 FIGURES_DIR: Final[Path] = OUTPUTS_DIR / "figures"
-MODELS_DIR: Final[Path] = PROJECT_ROOT / "models"
-REPORTS_DIR: Final[Path] = PROJECT_ROOT / "reports"
+MODELS_DIR: Final[Path] = RUNTIME_ROOT / "models"
+REPORTS_DIR: Final[Path] = RUNTIME_ROOT / "reports"
 
-DOCS_DIR: Final[Path] = PROJECT_ROOT / "docs"
-SQL_QUERY_OUTPUTS_DIR: Final[Path] = DOCS_DIR / "sql_query_outputs"
+DOCS_DIR: Final[Path] = RUNTIME_ROOT / "docs"
+SQL_QUERY_OUTPUTS_DIR: Final[Path] = (
+    DOCS_DIR
+    / "sql_query_outputs"
+)
 
 
 
@@ -58,11 +120,24 @@ SLEEP_EDFX_CHECKSUMS_URL: Final[str] = (
     f"{SLEEP_EDFX_BASE_URL}/SHA256SUMS.txt"
 )
 
-SLEEP_EDFX_RAW_DIR: Final[Path] = (
+DEFAULT_SLEEP_EDFX_RAW_DIR: Final[Path] = (
     RAW_DATA_DIR
     / "sleep-edfx"
     / SLEEP_EDFX_VERSION
     / "sleep-cassette"
+)
+
+SLEEP_EDFX_RAW_DIR_IS_EXTERNAL: Final[bool] = (
+    environment_variable_is_set(
+        SLEEP_EDFX_RAW_DIR_ENV
+    )
+)
+
+SLEEP_EDFX_RAW_DIR: Final[Path] = (
+    resolve_environment_path(
+        SLEEP_EDFX_RAW_DIR_ENV,
+        DEFAULT_SLEEP_EDFX_RAW_DIR,
+    )
 )
 
 SLEEP_EDFX_MANIFEST_PATH: Final[Path] = (
@@ -146,8 +221,7 @@ MODEL_FEATURE_SCHEMA_PATH: Final[Path] = (
 )
 
 EDA_OUTPUT_DIR: Final[Path] = (
-    PROJECT_ROOT
-    / "reports"
+    REPORTS_DIR
     / "eda"
 )
 
@@ -277,7 +351,11 @@ POWER_COLUMNS: Final[tuple[str, ...]] = (
 RUNTIME_DIRECTORIES: Final[tuple[Path, ...]] = (
     RAW_DATA_DIR,
     DATA_METADATA_DIR,
-    SLEEP_EDFX_RAW_DIR,
+    *(
+        ()
+        if SLEEP_EDFX_RAW_DIR_IS_EXTERNAL
+        else (SLEEP_EDFX_RAW_DIR,)
+    ),
     FEATURE_PARTS_DIR,
     INTERIM_DATA_DIR,
     PROCESSED_DATA_DIR,
@@ -290,8 +368,37 @@ RUNTIME_DIRECTORIES: Final[tuple[Path, ...]] = (
 )
 
 
+def runtime_path_contract() -> dict[str, object]:
+    """Return the resolved portable runtime path contract."""
+
+    return {
+        "project_root": str(PROJECT_ROOT),
+        "runtime_root": str(RUNTIME_ROOT),
+        "data_dir": str(DATA_DIR),
+        "raw_data_dir": str(RAW_DATA_DIR),
+        "sleep_edfx_raw_dir": str(
+            SLEEP_EDFX_RAW_DIR
+        ),
+        "sleep_edfx_raw_dir_is_external": (
+            SLEEP_EDFX_RAW_DIR_IS_EXTERNAL
+        ),
+        "database_path": str(DATABASE_PATH),
+        "outputs_dir": str(OUTPUTS_DIR),
+        "models_dir": str(MODELS_DIR),
+        "reports_dir": str(REPORTS_DIR),
+        "eda_output_dir": str(EDA_OUTPUT_DIR),
+        "runtime_directories": [
+            str(directory)
+            for directory in RUNTIME_DIRECTORIES
+        ],
+    }
+
+
 def ensure_runtime_directories() -> None:
-    """Create all directories required during pipeline execution."""
+    """Create every writable pipeline runtime directory."""
 
     for directory in RUNTIME_DIRECTORIES:
-        directory.mkdir(parents=True, exist_ok=True)
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
