@@ -61,6 +61,14 @@ PROBABILITY_COLUMNS = tuple(
     for class_name in CLASS_NAMES
 )
 
+CANONICAL_FLOAT_COLUMNS = (
+    "prediction_confidence",
+    "prediction_margin",
+    "prediction_entropy",
+    "prediction_normalized_entropy",
+    *PROBABILITY_COLUMNS,
+)
+
 REQUIRED_PREDICTION_COLUMNS = (
     *IDENTIFIER_COLUMNS,
     "predicted_label_encoded",
@@ -510,6 +518,31 @@ def validate_run_metadata(
     return normalized
 
 
+def canonicalize_signed_zero(
+    frame: pd.DataFrame,
+) -> pd.DataFrame:
+    canonical = frame.copy()
+
+    for column in CANONICAL_FLOAT_COLUMNS:
+        if column not in canonical.columns:
+            continue
+
+        values = canonical[
+            column
+        ].to_numpy(
+            dtype=float,
+            copy=True,
+        )
+
+        zero_mask = values == 0.0
+
+        values[zero_mask] = 0.0
+
+        canonical[column] = values
+
+    return canonical
+
+
 def validate_prediction_frame(
     predictions: pd.DataFrame,
     class_mapping: Mapping[str, int],
@@ -845,6 +878,10 @@ def validate_prediction_frame(
             raise ValueError(
                 "is_correct is inconsistent."
             )
+
+    frame = canonicalize_signed_zero(
+        frame
+    )
 
     return frame.reset_index(
         drop=True

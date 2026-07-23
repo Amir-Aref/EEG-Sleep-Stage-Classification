@@ -21,6 +21,7 @@ from scripts.phase3_prediction_store import (
     setup_prediction_database,
     sha256_bytes,
     synthetic_prediction_frame,
+    validate_prediction_frame,
 )
 
 
@@ -351,6 +352,135 @@ class Phase3PredictionStoreTests(
         self.assertEqual(
             rows["is_correct"].tolist(),
             [1, 0],
+        )
+
+    def test_signed_zero_is_canonicalized(
+        self,
+    ) -> None:
+        predictions = (
+            synthetic_prediction_frame()
+            .iloc[[0]]
+            .reset_index(drop=True)
+        )
+
+        probabilities = np.array(
+            [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ],
+            dtype=float,
+        )
+
+        predictions.loc[
+            0,
+            [
+                "probability_wake",
+                "probability_n1",
+                "probability_n2",
+                "probability_n3",
+                "probability_rem",
+            ],
+        ] = probabilities
+
+        predictions.loc[
+            0,
+            "predicted_label_encoded",
+        ] = 0
+
+        predictions.loc[
+            0,
+            "predicted_label",
+        ] = "Wake"
+
+        predictions.loc[
+            0,
+            "probability_argmax_label_encoded",
+        ] = 0
+
+        predictions.loc[
+            0,
+            "probability_argmax_label",
+        ] = "Wake"
+
+        predictions.loc[
+            0,
+            "predict_probability_argmax_agree",
+        ] = True
+
+        predictions.loc[
+            0,
+            "prediction_confidence",
+        ] = 1.0
+
+        predictions.loc[
+            0,
+            "prediction_margin",
+        ] = 1.0
+
+        predictions.loc[
+            0,
+            "prediction_entropy",
+        ] = -0.0
+
+        predictions.loc[
+            0,
+            "prediction_normalized_entropy",
+        ] = -0.0
+
+        validated = validate_prediction_frame(
+            predictions=predictions,
+            class_mapping=CLASS_MAPPING,
+        )
+
+        for column in (
+            "prediction_entropy",
+            "prediction_normalized_entropy",
+            "probability_n1",
+            "probability_n2",
+            "probability_n3",
+            "probability_rem",
+        ):
+            value = float(
+                validated.loc[
+                    0,
+                    column,
+                ]
+            )
+
+            self.assertEqual(
+                value,
+                0.0,
+            )
+
+            self.assertFalse(
+                np.signbit(value),
+                msg=(
+                    f"{column} retained "
+                    "a negative-zero sign."
+                ),
+            )
+
+        with tempfile.TemporaryDirectory() as directory:
+            output_path = (
+                Path(directory)
+                / "predictions.csv"
+            )
+
+            write_prediction_csv(
+                predictions=validated,
+                output_path=output_path,
+            )
+
+            csv_text = output_path.read_text(
+                encoding="utf-8"
+            )
+
+        self.assertNotIn(
+            ",-0,",
+            csv_text,
         )
 
     def test_prediction_hash_uses_canonical_csv_serialization(
