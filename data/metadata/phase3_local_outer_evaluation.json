@@ -1,0 +1,1007 @@
+{
+  "aggregate": {
+    "mean_outer_balanced_accuracy": 0.676621503817616,
+    "mean_outer_macro_f1": 0.6510022616715988,
+    "outer_fold_count": 4,
+    "pooled_test_metrics": {
+      "accuracy": 0.7487885743432797,
+      "balanced_accuracy": 0.6704589081560538,
+      "class_count": 5,
+      "class_mapping": {
+        "N1": 1,
+        "N2": 2,
+        "N3": 3,
+        "REM": 4,
+        "Wake": 0
+      },
+      "class_order": [
+        "Wake",
+        "N1",
+        "N2",
+        "N3",
+        "REM"
+      ],
+      "cohen_kappa": 0.6478246692199827,
+      "confusion_matrix": {
+        "encoded_labels": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "labels": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "normalized_by_true_class": [
+          [
+            0.6247960848287113,
+            0.1859706362153344,
+            0.01631321370309951,
+            0.10929853181076672,
+            0.0636215334420881
+          ],
+          [
+            0.19254658385093168,
+            0.4720496894409938,
+            0.09937888198757763,
+            0.003105590062111801,
+            0.2329192546583851
+          ],
+          [
+            0.019001085776330078,
+            0.02714440825190011,
+            0.8908794788273615,
+            0.02823018458197611,
+            0.03474484256243214
+          ],
+          [
+            0.11949685534591195,
+            0.0,
+            0.09014675052410902,
+            0.790356394129979,
+            0.0
+          ],
+          [
+            0.05697151424287856,
+            0.2863568215892054,
+            0.08245877061469266,
+            0.0,
+            0.5742128935532234
+          ]
+        ],
+        "raw": [
+          [
+            383,
+            114,
+            10,
+            67,
+            39
+          ],
+          [
+            62,
+            152,
+            32,
+            1,
+            75
+          ],
+          [
+            35,
+            50,
+            1641,
+            52,
+            64
+          ],
+          [
+            57,
+            0,
+            43,
+            377,
+            0
+          ],
+          [
+            38,
+            191,
+            55,
+            0,
+            383
+          ]
+        ]
+      },
+      "macro_f1": 0.6630545875877657,
+      "mean_confidence_when_correct": 0.8338412834597664,
+      "mean_confidence_when_incorrect": 0.6630878067459103,
+      "mean_normalized_entropy": 0.3254591068517962,
+      "mean_prediction_confidence": 0.790946059138637,
+      "mean_prediction_margin": 0.6562314546481136,
+      "multiclass_log_loss": 1.8638497846695368,
+      "per_class": [
+        {
+          "class_encoded": 0,
+          "class_name": "Wake",
+          "f1": 0.6447811447811448,
+          "precision": 0.6660869565217391,
+          "recall": 0.6247960848287113,
+          "support": 613
+        },
+        {
+          "class_encoded": 1,
+          "class_name": "N1",
+          "f1": 0.36670687575392036,
+          "precision": 0.29980276134122286,
+          "recall": 0.4720496894409938,
+          "support": 322
+        },
+        {
+          "class_encoded": 2,
+          "class_name": "N2",
+          "f1": 0.9058791057134971,
+          "precision": 0.9213924761370017,
+          "recall": 0.8908794788273615,
+          "support": 1842
+        },
+        {
+          "class_encoded": 3,
+          "class_name": "N3",
+          "f1": 0.7741273100616016,
+          "precision": 0.7585513078470825,
+          "recall": 0.790356394129979,
+          "support": 477
+        },
+        {
+          "class_encoded": 4,
+          "class_name": "REM",
+          "f1": 0.6237785016286646,
+          "precision": 0.6827094474153298,
+          "recall": 0.5742128935532234,
+          "support": 667
+        }
+      ],
+      "predict_probability_argmax_agreement": 0.9923488905891354,
+      "predict_probability_argmax_mismatch_count": 30,
+      "primary_metric_name": "macro_f1",
+      "sample_count": 3921,
+      "schema_version": "1.0.0",
+      "weighted_f1": 0.7567658138111626
+    },
+    "prediction_row_count": 3921,
+    "std_outer_balanced_accuracy": 0.021167410021071063,
+    "std_outer_macro_f1": 0.028750091130100797
+  },
+  "artifact_type": "phase3_local_outer_evaluation",
+  "complete_outer_evaluation": true,
+  "evaluated_outer_folds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "evaluation_contract": {
+    "each_epoch_tested_once_when_complete": true,
+    "hyperparameter_search_performed": false,
+    "selection_artifact_frozen": true,
+    "test_access_stage": "after_inner_model_selection"
+  },
+  "intended_use": "local_engineering_evaluation",
+  "outer_results": [
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 3080,
+      "metrics": {
+        "accuracy": 0.7360285374554102,
+        "balanced_accuracy": 0.6421384646168212,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6526816890613577,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.7819148936170213,
+              0.0851063829787234,
+              0.031914893617021274,
+              0.0,
+              0.10106382978723404
+            ],
+            [
+              0.2413793103448276,
+              0.1724137931034483,
+              0.20689655172413793,
+              0.0,
+              0.3793103448275862
+            ],
+            [
+              0.024,
+              0.0,
+              0.88,
+              0.092,
+              0.004
+            ],
+            [
+              0.22727272727272727,
+              0.0,
+              0.03636363636363636,
+              0.7363636363636363,
+              0.0
+            ],
+            [
+              0.016,
+              0.048,
+              0.296,
+              0.0,
+              0.64
+            ]
+          ],
+          "raw": [
+            [
+              147,
+              16,
+              6,
+              0,
+              19
+            ],
+            [
+              14,
+              10,
+              12,
+              0,
+              22
+            ],
+            [
+              6,
+              0,
+              220,
+              23,
+              1
+            ],
+            [
+              50,
+              0,
+              8,
+              162,
+              0
+            ],
+            [
+              2,
+              6,
+              37,
+              0,
+              80
+            ]
+          ]
+        },
+        "macro_f1": 0.6435740342800675,
+        "mean_confidence_when_correct": 0.7626903533237177,
+        "mean_confidence_when_incorrect": 0.5147876787057368,
+        "mean_normalized_entropy": 0.45500165395174264,
+        "mean_prediction_confidence": 0.6972511217360938,
+        "mean_prediction_margin": 0.511885566389901,
+        "multiclass_log_loss": 0.6194079642698257,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.7223587223587223,
+            "precision": 0.6712328767123288,
+            "recall": 0.7819148936170213,
+            "support": 188
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.2222222222222222,
+            "precision": 0.3125,
+            "recall": 0.1724137931034483,
+            "support": 58
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.8255159474671669,
+            "precision": 0.7773851590106007,
+            "recall": 0.88,
+            "support": 250
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.8,
+            "precision": 0.8756756756756757,
+            "recall": 0.7363636363636363,
+            "support": 220
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.6477732793522267,
+            "precision": 0.6557377049180327,
+            "recall": 0.64,
+            "support": 125
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 841,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7277562134104028
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        1,
+        2,
+        3
+      ],
+      "outer_fold": 1,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7696067210910192,
+        "mean_balanced_accuracy": 0.6933064665468351,
+        "mean_cohen_kappa": 0.6632070436957518,
+        "mean_macro_f1": 0.6674362441510517,
+        "mean_multiclass_log_loss": 0.6203567147370249,
+        "mean_weighted_f1": 0.7764467851273182,
+        "std_accuracy": 0.02144113341181518,
+        "std_balanced_accuracy": 0.029201947717084623,
+        "std_cohen_kappa": 0.02832198622297428,
+        "std_macro_f1": 0.03941696545750903,
+        "std_multiclass_log_loss": 0.013262072145838258,
+        "std_weighted_f1": 0.02030439477902752
+      },
+      "test_row_count": 841,
+      "test_subjects": [
+        0
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_006",
+      "candidate_parameters": {
+        "classifier__max_depth": 12,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 2818,
+      "metrics": {
+        "accuracy": 0.7624660018132366,
+        "balanced_accuracy": 0.6874838877977637,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6591117129699532,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.43312101910828027,
+              0.06369426751592357,
+              0.006369426751592357,
+              0.4267515923566879,
+              0.07006369426751592
+            ],
+            [
+              0.22018348623853212,
+              0.25688073394495414,
+              0.06422018348623854,
+              0.009174311926605505,
+              0.44954128440366975
+            ],
+            [
+              0.033807829181494664,
+              0.008896797153024912,
+              0.8701067615658363,
+              0.023131672597864767,
+              0.06405693950177936
+            ],
+            [
+              0.0,
+              0.0,
+              0.02857142857142857,
+              0.9714285714285714,
+              0.0
+            ],
+            [
+              0.058823529411764705,
+              0.011764705882352941,
+              0.023529411764705882,
+              0.0,
+              0.9058823529411765
+            ]
+          ],
+          "raw": [
+            [
+              68,
+              10,
+              1,
+              67,
+              11
+            ],
+            [
+              24,
+              28,
+              7,
+              1,
+              49
+            ],
+            [
+              19,
+              5,
+              489,
+              13,
+              36
+            ],
+            [
+              0,
+              0,
+              3,
+              102,
+              0
+            ],
+            [
+              10,
+              2,
+              4,
+              0,
+              154
+            ]
+          ]
+        },
+        "macro_f1": 0.6423920137299678,
+        "mean_confidence_when_correct": 0.8434561189278535,
+        "mean_confidence_when_incorrect": 0.6327932517096568,
+        "mean_normalized_entropy": 0.3568504886263287,
+        "mean_prediction_confidence": 0.7934165258080281,
+        "mean_prediction_margin": 0.671462107143145,
+        "multiclass_log_loss": 0.6313460217532677,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.4892086330935252,
+            "precision": 0.5619834710743802,
+            "recall": 0.43312101910828027,
+            "support": 157
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.36363636363636365,
+            "precision": 0.6222222222222222,
+            "recall": 0.25688073394495414,
+            "support": 109
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.9174484052532833,
+            "precision": 0.9702380952380952,
+            "recall": 0.8701067615658363,
+            "support": 562
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.7083333333333334,
+            "precision": 0.5573770491803278,
+            "recall": 0.9714285714285714,
+            "support": 105
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.7333333333333333,
+            "precision": 0.616,
+            "recall": 0.9058823529411765,
+            "support": 170
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 1103,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7534812234370435
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        2,
+        3
+      ],
+      "outer_fold": 2,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.759722198731295,
+        "mean_balanced_accuracy": 0.6674552007977907,
+        "mean_cohen_kappa": 0.6557648256040305,
+        "mean_macro_f1": 0.6449830832240111,
+        "mean_multiclass_log_loss": 0.6429737515384818,
+        "mean_weighted_f1": 0.7563991780010136,
+        "std_accuracy": 0.04593573931738392,
+        "std_balanced_accuracy": 0.05129099757164862,
+        "std_cohen_kappa": 0.07935461704332353,
+        "std_macro_f1": 0.058894619786812014,
+        "std_multiclass_log_loss": 0.08955698634330753,
+        "std_weighted_f1": 0.040075726247068545
+      },
+      "test_row_count": 1103,
+      "test_subjects": [
+        1
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_004",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": 0.5,
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 2896,
+      "metrics": {
+        "accuracy": 0.7814634146341464,
+        "balanced_accuracy": 0.6985855975572755,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6700011498217776,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.4765625,
+              0.4375,
+              0.015625,
+              0.0,
+              0.0703125
+            ],
+            [
+              0.1595744680851064,
+              0.7340425531914894,
+              0.0851063829787234,
+              0.0,
+              0.02127659574468085
+            ],
+            [
+              0.009174311926605505,
+              0.023853211009174313,
+              0.9100917431192661,
+              0.009174311926605505,
+              0.047706422018348627
+            ],
+            [
+              0.031578947368421054,
+              0.0,
+              0.25263157894736843,
+              0.7157894736842105,
+              0.0
+            ],
+            [
+              0.05521472392638037,
+              0.20245398773006135,
+              0.08588957055214724,
+              0.0,
+              0.656441717791411
+            ]
+          ],
+          "raw": [
+            [
+              61,
+              56,
+              2,
+              0,
+              9
+            ],
+            [
+              15,
+              69,
+              8,
+              0,
+              2
+            ],
+            [
+              5,
+              13,
+              496,
+              5,
+              26
+            ],
+            [
+              3,
+              0,
+              24,
+              68,
+              0
+            ],
+            [
+              9,
+              33,
+              14,
+              0,
+              107
+            ]
+          ]
+        },
+        "macro_f1": 0.6980621171781521,
+        "mean_confidence_when_correct": 0.7949801563295786,
+        "mean_confidence_when_incorrect": 0.5845911086562036,
+        "mean_normalized_entropy": 0.41537417092147644,
+        "mean_prediction_confidence": 0.7490024522526656,
+        "mean_prediction_margin": 0.594998177600993,
+        "multiclass_log_loss": 0.6079145648361354,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.5520361990950227,
+            "precision": 0.6559139784946236,
+            "recall": 0.4765625,
+            "support": 128
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.5207547169811321,
+            "precision": 0.40350877192982454,
+            "recall": 0.7340425531914894,
+            "support": 94
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.9109274563820018,
+            "precision": 0.9117647058823529,
+            "recall": 0.9100917431192661,
+            "support": 545
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.8095238095238095,
+            "precision": 0.9315068493150684,
+            "recall": 0.7157894736842105,
+            "support": 95
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.6970684039087948,
+            "precision": 0.7430555555555556,
+            "recall": 0.656441717791411,
+            "support": 163
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 1025,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7869209291224154
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        1,
+        3
+      ],
+      "outer_fold": 3,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7435593118517061,
+        "mean_balanced_accuracy": 0.6673110744879108,
+        "mean_cohen_kappa": 0.6420102226374823,
+        "mean_macro_f1": 0.6346984691040319,
+        "mean_multiclass_log_loss": 0.6737408120772317,
+        "mean_weighted_f1": 0.7464176403538985,
+        "std_accuracy": 0.03743046480775413,
+        "std_balanced_accuracy": 0.049117839224889194,
+        "std_cohen_kappa": 0.060052708165063286,
+        "std_macro_f1": 0.08319010209651845,
+        "std_multiclass_log_loss": 0.1015365430817686,
+        "std_weighted_f1": 0.057941074489159285
+      },
+      "test_row_count": 1025,
+      "test_subjects": [
+        2
+      ]
+    },
+    {
+      "candidate_id": "sgd_logistic__candidate_004",
+      "candidate_parameters": {
+        "classifier__alpha": 1e-05,
+        "classifier__l1_ratio": 0.15,
+        "classifier__penalty": "elasticnet"
+      },
+      "development_row_count": 2969,
+      "metrics": {
+        "accuracy": 0.7090336134453782,
+        "balanced_accuracy": 0.6782780652986038,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.5878195248976988,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.7642857142857142,
+              0.22857142857142856,
+              0.007142857142857143,
+              0.0,
+              0.0
+            ],
+            [
+              0.14754098360655737,
+              0.7377049180327869,
+              0.08196721311475409,
+              0.0,
+              0.03278688524590164
+            ],
+            [
+              0.010309278350515464,
+              0.06597938144329897,
+              0.8989690721649485,
+              0.02268041237113402,
+              0.002061855670103093
+            ],
+            [
+              0.07017543859649122,
+              0.0,
+              0.14035087719298245,
+              0.7894736842105263,
+              0.0
+            ],
+            [
+              0.08133971291866028,
+              0.7177033492822966,
+              0.0,
+              0.0,
+              0.20095693779904306
+            ]
+          ],
+          "raw": [
+            [
+              107,
+              32,
+              1,
+              0,
+              0
+            ],
+            [
+              9,
+              45,
+              5,
+              0,
+              2
+            ],
+            [
+              5,
+              32,
+              436,
+              11,
+              1
+            ],
+            [
+              4,
+              0,
+              8,
+              45,
+              0
+            ],
+            [
+              17,
+              150,
+              0,
+              0,
+              42
+            ]
+          ]
+        },
+        "macro_f1": 0.6199808814982076,
+        "mean_confidence_when_correct": 0.9332251530254448,
+        "mean_confidence_when_incorrect": 0.8740735909210413,
+        "mean_normalized_entropy": 0.07784049668395329,
+        "mean_prediction_confidence": 0.9160140367408652,
+        "mean_prediction_margin": 0.8320293446653778,
+        "multiclass_log_loss": 5.743430479818737,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.7588652482269503,
+            "precision": 0.7535211267605634,
+            "recall": 0.7642857142857142,
+            "support": 140
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.28125,
+            "precision": 0.17374517374517376,
+            "recall": 0.7377049180327869,
+            "support": 61
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.932620320855615,
+            "precision": 0.9688888888888889,
+            "recall": 0.8989690721649485,
+            "support": 485
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.7964601769911505,
+            "precision": 0.8035714285714286,
+            "recall": 0.7894736842105263,
+            "support": 57
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.33070866141732286,
+            "precision": 0.9333333333333333,
+            "recall": 0.20095693779904306,
+            "support": 209
+          }
+        ],
+        "predict_probability_argmax_agreement": 0.9684873949579832,
+        "predict_probability_argmax_mismatch_count": 30,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 952,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7250363242557377
+      },
+      "model_name": "sgd_logistic",
+      "outer_development_subjects": [
+        0,
+        1,
+        2
+      ],
+      "outer_fold": 4,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7887372446626388,
+        "mean_balanced_accuracy": 0.7201809523506427,
+        "mean_cohen_kappa": 0.7002696224793831,
+        "mean_macro_f1": 0.7034849383600389,
+        "mean_multiclass_log_loss": 4.814432089293493,
+        "mean_weighted_f1": 0.7882622530908191,
+        "std_accuracy": 0.011450700359571164,
+        "std_balanced_accuracy": 0.011405914551101211,
+        "std_cohen_kappa": 0.031112811629444105,
+        "std_macro_f1": 0.018331264195912696,
+        "std_multiclass_log_loss": 0.4435444532819047,
+        "std_weighted_f1": 0.010672367742200326
+      },
+      "test_row_count": 952,
+      "test_subjects": [
+        3
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "scientific_reporting": {
+    "allowed": false,
+    "reason": "The local dataset contains only four subjects and is reserved for engineering validation."
+  },
+  "source": {
+    "evaluation_protocol_path": "config/phase3_evaluation_protocol.json",
+    "evaluation_protocol_sha256": "efba77bc73bcc1c239f99a6c9d7ec06da152b7b327666f72abec972b91454269",
+    "model_input_path": "data/processed/sleep_edfx_model_input.csv",
+    "model_input_sha256": "88856c165c2eef2c554325c2ef9fe9e843572077596af0ab344ecd844021c0c0",
+    "model_registry_path": "config/phase3_model_registry.json",
+    "model_registry_sha256": "a011d08b9d9048232d8ef0862be2c4d1706650c737d3a9218102fdc3340ade27",
+    "model_schema_path": "data/metadata/sleep_edfx_model_feature_schema.json",
+    "model_schema_sha256": "df83f4f4a486128ea6ec89809ee4d31a5bd0812452b12c7cb5a4ecf583de85fc",
+    "selection_artifact_path": "data/metadata/phase3_local_inner_search_results.json",
+    "selection_artifact_sha256": "0763a4712113daf4777de441782d36bc223cc292be29b760e3eb283a5d560132",
+    "split_manifest_path": "data/metadata/phase3_local_split_manifest.json",
+    "split_manifest_sha256": "7ffdaebda2d4e13b6f322b59b0d66111e49c83f3d51c3948a9bf24d5987e39a9"
+  }
+}

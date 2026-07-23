@@ -1,0 +1,162 @@
+{
+  "artifact_type": "phase3_local_trained_model_manifest",
+  "complete_model_set": true,
+  "deployment": {
+    "ready": false,
+    "reason": "These are outer-fold evaluation models. Each model excludes one held-out subject."
+  },
+  "evaluated_outer_folds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "intended_use": "local_engineering_reproducibility",
+  "model_count": 4,
+  "models": [
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "deployment_ready": false,
+      "excluded_test_subjects": [
+        0
+      ],
+      "feature_count": 28,
+      "model_file_path": "artifacts/models/phase3_local_outer/outer_fold_01__random_forest__random_forest__candidate_002.joblib",
+      "model_file_sha256": "30815ee73f7b07c15e325ff13d4e4e66da591c8d0880f8aaf82c46ea30b53c0a",
+      "model_file_size_bytes": 4378938,
+      "model_name": "random_forest",
+      "outer_fold": 1,
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "training_row_count": 3080,
+      "training_subjects": [
+        1,
+        2,
+        3
+      ],
+      "verification_row_count": 64
+    },
+    {
+      "candidate_id": "random_forest__candidate_006",
+      "candidate_parameters": {
+        "classifier__max_depth": 12,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "deployment_ready": false,
+      "excluded_test_subjects": [
+        1
+      ],
+      "feature_count": 28,
+      "model_file_path": "artifacts/models/phase3_local_outer/outer_fold_02__random_forest__random_forest__candidate_006.joblib",
+      "model_file_sha256": "1251edee09df7447779a12f6eba2403decc57804c9f357167c148ea29b53b6db",
+      "model_file_size_bytes": 3676090,
+      "model_name": "random_forest",
+      "outer_fold": 2,
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "training_row_count": 2818,
+      "training_subjects": [
+        0,
+        2,
+        3
+      ],
+      "verification_row_count": 64
+    },
+    {
+      "candidate_id": "random_forest__candidate_004",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": 0.5,
+        "classifier__min_samples_leaf": 4
+      },
+      "deployment_ready": false,
+      "excluded_test_subjects": [
+        2
+      ],
+      "feature_count": 28,
+      "model_file_path": "artifacts/models/phase3_local_outer/outer_fold_03__random_forest__random_forest__candidate_004.joblib",
+      "model_file_sha256": "9ad30dcef7d1f321f05b6faff81e9243b6e96d719ca70bd07edfebdadf2f88f3",
+      "model_file_size_bytes": 3497823,
+      "model_name": "random_forest",
+      "outer_fold": 3,
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "training_row_count": 2896,
+      "training_subjects": [
+        0,
+        1,
+        3
+      ],
+      "verification_row_count": 64
+    },
+    {
+      "candidate_id": "sgd_logistic__candidate_004",
+      "candidate_parameters": {
+        "classifier__alpha": 1e-05,
+        "classifier__l1_ratio": 0.15,
+        "classifier__penalty": "elasticnet"
+      },
+      "deployment_ready": false,
+      "excluded_test_subjects": [
+        3
+      ],
+      "feature_count": 28,
+      "model_file_path": "artifacts/models/phase3_local_outer/outer_fold_04__sgd_logistic__sgd_logistic__candidate_004.joblib",
+      "model_file_sha256": "675b8651ecdc6a6e04b565adfe39892446168849a05f658a4faf91140b92250e",
+      "model_file_size_bytes": 5808,
+      "model_name": "sgd_logistic",
+      "outer_fold": 4,
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "training_row_count": 2969,
+      "training_subjects": [
+        0,
+        1,
+        2
+      ],
+      "verification_row_count": 64
+    }
+  ],
+  "persistence_contract": {
+    "hyperparameter_search_performed": false,
+    "joblib_files_must_be_trusted": true,
+    "outer_test_metrics_loaded": false,
+    "roundtrip_probability_atol": 1e-15,
+    "roundtrip_verification_partition": "outer_development",
+    "selection_artifact_frozen": true,
+    "test_feature_matrix_loaded": false,
+    "test_predictions_loaded": false
+  },
+  "runtime": {
+    "joblib": "1.5.3",
+    "numpy": "2.5.1",
+    "pandas": "3.0.3",
+    "python": "3.13.9",
+    "scikit_learn": "1.9.0"
+  },
+  "schema_version": "1.0.0",
+  "scientific_reporting": {
+    "allowed": false,
+    "reason": "The local dataset contains only four subjects and remains an engineering validation dataset."
+  },
+  "source": {
+    "evaluation_protocol_path": "config/phase3_evaluation_protocol.json",
+    "evaluation_protocol_sha256": "efba77bc73bcc1c239f99a6c9d7ec06da152b7b327666f72abec972b91454269",
+    "model_input_path": "data/processed/sleep_edfx_model_input.csv",
+    "model_input_sha256": "88856c165c2eef2c554325c2ef9fe9e843572077596af0ab344ecd844021c0c0",
+    "model_registry_path": "config/phase3_model_registry.json",
+    "model_registry_sha256": "a011d08b9d9048232d8ef0862be2c4d1706650c737d3a9218102fdc3340ade27",
+    "model_schema_path": "data/metadata/sleep_edfx_model_feature_schema.json",
+    "model_schema_sha256": "df83f4f4a486128ea6ec89809ee4d31a5bd0812452b12c7cb5a4ecf583de85fc",
+    "selection_artifact_path": "data/metadata/phase3_local_inner_search_results.json",
+    "selection_artifact_sha256": "0763a4712113daf4777de441782d36bc223cc292be29b760e3eb283a5d560132",
+    "split_manifest_path": "data/metadata/phase3_local_split_manifest.json",
+    "split_manifest_sha256": "7ffdaebda2d4e13b6f322b59b0d66111e49c83f3d51c3948a9bf24d5987e39a9"
+  }
+}

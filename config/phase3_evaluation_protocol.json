@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "random_seed": 42,
+  "group_column": "subject_id",
+  "target_column": "sleep_stage_encoded",
+  "target_name_column": "sleep_stage",
+  "class_mapping": {
+    "Wake": 0,
+    "N1": 1,
+    "N2": 2,
+    "N3": 3,
+    "REM": 4
+  },
+  "random_epoch_split_allowed": false,
+  "primary_metric": "macro_f1",
+  "secondary_metrics": [
+    "balanced_accuracy",
+    "cohen_kappa",
+    "weighted_f1",
+    "accuracy",
+    "per_class_precision",
+    "per_class_recall",
+    "per_class_f1",
+    "confusion_matrix"
+  ],
+  "model_selection_policy": {
+    "optimization_direction": "maximize",
+    "rank_by": "mean_inner_macro_f1",
+    "first_tie_breaker": "lower_inner_macro_f1_std",
+    "second_tie_breaker": "lower_model_complexity"
+  },
+  "local_development_protocol": {
+    "strategy": "exhaustive_nested_leave_one_subject_out",
+    "outer_test_subject_count": 1,
+    "inner_validation_subject_count": 1,
+    "outer_fold_count": 4,
+    "inner_fold_count_per_outer": 3,
+    "total_train_validation_test_combinations": 12,
+    "intended_use": "engineering_smoke_test_only",
+    "final_scientific_reporting_allowed": false
+  },
+  "full_dataset_protocol": {
+    "strategy": "nested_stratified_group_k_fold",
+    "outer_fold_count": 5,
+    "inner_fold_count": 3,
+    "shuffle": true,
+    "random_state": 42,
+    "intended_use": "final_model_comparison_and_unbiased_performance_estimation",
+    "final_scientific_reporting_allowed": true
+  },
+  "leakage_prevention": {
+    "group_isolation_required": true,
+    "test_partition_used_for_tuning": false,
+    "scaler_fit_scope": "training_partition_only",
+    "feature_selection_fit_scope": "training_partition_only",
+    "class_weight_fit_scope": "training_partition_only",
+    "resampling_fit_scope": "training_partition_only",
+    "default_resampling_policy": "disabled",
+    "outer_refit_scope": "all_outer_development_subjects_after_inner_model_selection"
+  },
+  "reporting_policy": {
+    "report_every_outer_fold": true,
+    "report_mean_and_standard_deviation": true,
+    "report_per_class_metrics": true,
+    "report_confusion_matrix": true,
+    "report_subject_level_results": true
+  }
+}

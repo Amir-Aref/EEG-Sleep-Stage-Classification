@@ -34,3 +34,5 @@ Dockerfile text eol=lf
 *.pkl binary
 *.npy binary
 *.npz binary
+artifacts/models/phase3_local_outer/*.joblib filter=lfs diff=lfs merge=lfs -text
+artifacts/models/phase3_local_final_refit/*.joblib filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,149 @@
+{
+  "schema_version": "1.0.0",
+  "random_seed": 42,
+  "primary_metric": "macro_f1",
+  "probability_output_required": true,
+  "expected_model_count": 5,
+  "expected_selection_model_count": 4,
+  "expected_total_candidate_count": 29,
+  "models": {
+    "dummy_prior": {
+      "estimator": "sklearn.dummy.DummyClassifier",
+      "role": "non_selectable_baseline",
+      "eligible_for_selection": false,
+      "preprocessing": "passthrough",
+      "complexity_rank": 0,
+      "fixed_parameters": {
+        "strategy": "prior",
+        "random_state": 42
+      },
+      "parameter_grid": [
+        {}
+      ]
+    },
+    "logistic_regression": {
+      "estimator": "sklearn.linear_model.LogisticRegression",
+      "role": "regularized_linear_model",
+      "eligible_for_selection": true,
+      "preprocessing": "standard_scaler",
+      "complexity_rank": 1,
+      "fixed_parameters": {
+        "solver": "lbfgs",
+        "l1_ratio": 0.0,
+        "class_weight": "balanced",
+        "max_iter": 3000,
+        "random_state": 42
+      },
+      "parameter_grid": [
+        {
+          "classifier__C": [
+            0.1,
+            1.0,
+            10.0
+          ]
+        }
+      ]
+    },
+    "sgd_logistic": {
+      "estimator": "sklearn.linear_model.SGDClassifier",
+      "role": "scalable_regularized_linear_model",
+      "eligible_for_selection": true,
+      "preprocessing": "standard_scaler",
+      "complexity_rank": 2,
+      "fixed_parameters": {
+        "loss": "log_loss",
+        "class_weight": "balanced",
+        "max_iter": 3000,
+        "tol": 0.0001,
+        "average": true,
+        "early_stopping": false,
+        "n_jobs": -1,
+        "random_state": 42
+      },
+      "parameter_grid": [
+        {
+          "classifier__penalty": [
+            "l2"
+          ],
+          "classifier__alpha": [
+            0.00001,
+            0.0001,
+            0.001
+          ]
+        },
+        {
+          "classifier__penalty": [
+            "elasticnet"
+          ],
+          "classifier__alpha": [
+            0.00001,
+            0.0001,
+            0.001
+          ],
+          "classifier__l1_ratio": [
+            0.15,
+            0.5
+          ]
+        }
+      ]
+    },
+    "random_forest": {
+      "estimator": "sklearn.ensemble.RandomForestClassifier",
+      "role": "bagged_tree_ensemble",
+      "eligible_for_selection": true,
+      "preprocessing": "passthrough",
+      "complexity_rank": 3,
+      "fixed_parameters": {
+        "n_estimators": 300,
+        "class_weight": "balanced_subsample",
+        "n_jobs": -1,
+        "random_state": 42
+      },
+      "parameter_grid": [
+        {
+          "classifier__max_depth": [
+            null,
+            12
+          ],
+          "classifier__min_samples_leaf": [
+            1,
+            4
+          ],
+          "classifier__max_features": [
+            "sqrt",
+            0.5
+          ]
+        }
+      ]
+    },
+    "extra_trees": {
+      "estimator": "sklearn.ensemble.ExtraTreesClassifier",
+      "role": "extremely_randomized_tree_ensemble",
+      "eligible_for_selection": true,
+      "preprocessing": "passthrough",
+      "complexity_rank": 4,
+      "fixed_parameters": {
+        "n_estimators": 300,
+        "class_weight": "balanced",
+        "n_jobs": -1,
+        "random_state": 42
+      },
+      "parameter_grid": [
+        {
+          "classifier__max_depth": [
+            null,
+            12
+          ],
+          "classifier__min_samples_leaf": [
+            1,
+            4
+          ],
+          "classifier__max_features": [
+            "sqrt",
+            0.5
+          ]
+        }
+      ]
+    }
+  }
+}

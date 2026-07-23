@@ -1,0 +1,91 @@
+{
+  "class_counts": {
+    "N1": 322,
+    "N2": 1842,
+    "N3": 477,
+    "REM": 667,
+    "Wake": 613
+  },
+  "class_mapping": {
+    "N1": 1,
+    "N2": 2,
+    "N3": 3,
+    "REM": 4,
+    "Wake": 0
+  },
+  "duplicate_identifier_rows": 0,
+  "feature_count": 28,
+  "feature_names": [
+    "mean_uv",
+    "std_uv",
+    "median_uv",
+    "min_uv",
+    "max_uv",
+    "peak_to_peak_uv",
+    "zero_crossing_rate",
+    "line_length_uv",
+    "skewness",
+    "kurtosis_excess",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "delta_power_uv2",
+    "theta_power_uv2",
+    "alpha_power_uv2",
+    "sigma_power_uv2",
+    "beta_power_uv2",
+    "relative_delta_power",
+    "relative_theta_power",
+    "relative_alpha_power",
+    "relative_sigma_power",
+    "theta_alpha_ratio",
+    "alpha_beta_ratio",
+    "sigma_beta_ratio",
+    "spectral_entropy",
+    "dominant_frequency_hz",
+    "spectral_centroid_hz",
+    "spectral_edge_frequency_95_hz"
+  ],
+  "feature_scaling_applied": false,
+  "group_column": "subject_id",
+  "identifier_columns": [
+    "subject_id",
+    "recording_id",
+    "night",
+    "epoch_id"
+  ],
+  "missing_cell_count": 0,
+  "non_finite_feature_cell_count": 0,
+  "quality_columns": [
+    "quality_issue_flag"
+  ],
+  "quality_issue_counts": {
+    "quality_issue_flag": 0
+  },
+  "random_epoch_split_allowed": false,
+  "row_count": 3921,
+  "rows_per_subject": {
+    "0": 841,
+    "1": 1103,
+    "2": 1025,
+    "3": 952
+  },
+  "schema_version": "1.0.0",
+  "source": {
+    "evaluation_protocol_path": "config/phase3_evaluation_protocol.json",
+    "evaluation_protocol_sha256": "efba77bc73bcc1c239f99a6c9d7ec06da152b7b327666f72abec972b91454269",
+    "model_input_path": "data/processed/sleep_edfx_model_input.csv",
+    "model_input_sha256": "88856c165c2eef2c554325c2ef9fe9e843572077596af0ab344ecd844021c0c0",
+    "model_schema_path": "data/metadata/sleep_edfx_model_feature_schema.json",
+    "model_schema_sha256": "df83f4f4a486128ea6ec89809ee4d31a5bd0812452b12c7cb5a4ecf583de85fc"
+  },
+  "source_column_count": 35,
+  "subject_count": 4,
+  "subjects": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "target_column": "sleep_stage_encoded",
+  "target_name_column": "sleep_stage"
+}
