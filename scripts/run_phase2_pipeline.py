@@ -23,6 +23,13 @@ try:
         SLEEP_EDFX_VERSION,
         runtime_path_contract,
     )
+    from .phase2_artifact_manifest import (
+        build_artifact_manifest,
+        capture_artifact_snapshot,
+        runtime_relative_path,
+        selected_artifact_specs,
+        write_artifact_manifest,
+    )
     from .run_provenance import (
         create_run_manifest,
         fail_run_manifest,
@@ -44,6 +51,13 @@ except ImportError:
         SLEEP_EDFX_MANIFEST_PATH,
         SLEEP_EDFX_VERSION,
         runtime_path_contract,
+    )
+    from phase2_artifact_manifest import (
+        build_artifact_manifest,
+        capture_artifact_snapshot,
+        runtime_relative_path,
+        selected_artifact_specs,
+        write_artifact_manifest,
     )
     from run_provenance import (
         create_run_manifest,
@@ -420,6 +434,115 @@ def exception_payload(
     return payload
 
 
+def artifact_manifest_output_paths(
+    run_manifest_path: Path,
+) -> tuple[Path, Path]:
+    """Resolve execution-specific artifact-manifest paths."""
+
+    output_directory = (
+        run_manifest_path.resolve().parent
+    )
+
+    return (
+        output_directory
+        / "artifact_manifest.json",
+        output_directory
+        / "artifact_manifest.csv",
+    )
+
+
+def persist_artifact_manifest(
+    *,
+    run_manifest: dict[str, Any],
+    run_manifest_path: Path,
+    selected_steps: Sequence[str],
+    artifact_specs: Sequence[Any],
+    before_snapshot: dict[str, Any],
+    runtime_root: Path,
+) -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+]:
+    """Capture, compare and atomically persist output artifacts."""
+
+    after_snapshot = (
+        capture_artifact_snapshot(
+            artifact_specs,
+            runtime_root=runtime_root,
+        )
+    )
+
+    artifact_manifest = (
+        build_artifact_manifest(
+            run_id=str(
+                run_manifest["run_id"]
+            ),
+            execution_id=str(
+                run_manifest[
+                    "execution_id"
+                ]
+            ),
+            selected_steps=selected_steps,
+            before_snapshot=before_snapshot,
+            after_snapshot=after_snapshot,
+        )
+    )
+
+    (
+        json_output_path,
+        csv_output_path,
+    ) = artifact_manifest_output_paths(
+        run_manifest_path
+    )
+
+    write_artifact_manifest(
+        manifest=artifact_manifest,
+        json_output_path=json_output_path,
+        csv_output_path=csv_output_path,
+    )
+
+    reference = {
+        "status": artifact_manifest[
+            "status"
+        ],
+        "artifact_count": (
+            artifact_manifest[
+                "artifact_count"
+            ]
+        ),
+        "counts_by_change_type": (
+            artifact_manifest[
+                "counts_by_change_type"
+            ]
+        ),
+        "json_path": runtime_relative_path(
+            json_output_path,
+            runtime_root=runtime_root,
+        ),
+        "json_size_bytes": (
+            json_output_path.stat().st_size
+        ),
+        "json_sha256": sha256_file(
+            json_output_path
+        ),
+        "csv_path": runtime_relative_path(
+            csv_output_path,
+            runtime_root=runtime_root,
+        ),
+        "csv_size_bytes": (
+            csv_output_path.stat().st_size
+        ),
+        "csv_sha256": sha256_file(
+            csv_output_path
+        ),
+    }
+
+    return (
+        artifact_manifest,
+        reference,
+    )
+
+
 def execute_pipeline(
     arguments: argparse.Namespace,
     steps: Sequence[PipelineStep],
@@ -429,16 +552,46 @@ def execute_pipeline(
     list[tuple[str, float]],
     float,
 ]:
-    """Execute all steps while atomically recording provenance."""
+    """Execute all steps while recording run and artifact provenance."""
 
     repository = repository_snapshot(
         PROJECT_ROOT
     )
 
+    path_contract = (
+        runtime_path_contract()
+    )
+
+    runtime_root = Path(
+        str(
+            path_contract[
+                "runtime_root"
+            ]
+        )
+    ).resolve()
+
+    selected_steps = [
+        step.name
+        for step in steps
+    ]
+
+    artifact_specs = (
+        selected_artifact_specs(
+            selected_steps
+        )
+    )
+
+    before_artifact_snapshot = (
+        capture_artifact_snapshot(
+            artifact_specs,
+            runtime_root=runtime_root,
+        )
+    )
+
     manifest = create_run_manifest(
         repository=repository,
         arguments=vars(arguments),
-        path_contract=runtime_path_contract(),
+        path_contract=path_contract,
         input_identity=build_input_identity(),
         steps=pipeline_step_payloads(
             steps
@@ -446,6 +599,16 @@ def execute_pipeline(
         plan_mode=False,
         python_executable=sys.executable,
     )
+
+    manifest["artifact_tracking"] = {
+        "status": "pending",
+        "selected_spec_count": len(
+            artifact_specs
+        ),
+        "selected_steps": (
+            selected_steps
+        ),
+    }
 
     manifest_path = (
         run_manifest_output_path(
@@ -464,6 +627,10 @@ def execute_pipeline(
         manifest,
         started_at=utc_now(),
     )
+
+    manifest[
+        "artifact_tracking"
+    ]["status"] = "running"
 
     write_run_manifest(
         manifest,
@@ -561,6 +728,56 @@ def execute_pipeline(
                 ),
             )
 
+            try:
+                (
+                    artifact_manifest,
+                    artifact_reference,
+                ) = persist_artifact_manifest(
+                    run_manifest=manifest,
+                    run_manifest_path=(
+                        manifest_path
+                    ),
+                    selected_steps=(
+                        selected_steps
+                    ),
+                    artifact_specs=(
+                        artifact_specs
+                    ),
+                    before_snapshot=(
+                        before_artifact_snapshot
+                    ),
+                    runtime_root=(
+                        runtime_root
+                    ),
+                )
+            except BaseException as artifact_error:
+                manifest[
+                    "artifact_manifest"
+                ] = {
+                    "status": "write_failed",
+                    "error": exception_payload(
+                        artifact_error
+                    ),
+                }
+
+                manifest[
+                    "artifact_tracking"
+                ]["status"] = (
+                    "write_failed"
+                )
+            else:
+                manifest[
+                    "artifact_manifest"
+                ] = artifact_reference
+
+                manifest[
+                    "artifact_tracking"
+                ]["status"] = (
+                    artifact_manifest[
+                        "status"
+                    ]
+                )
+
             write_run_manifest(
                 manifest,
                 manifest_path,
@@ -598,6 +815,108 @@ def execute_pipeline(
         time.perf_counter()
         - total_start
     )
+
+    try:
+        (
+            artifact_manifest,
+            artifact_reference,
+        ) = persist_artifact_manifest(
+            run_manifest=manifest,
+            run_manifest_path=manifest_path,
+            selected_steps=selected_steps,
+            artifact_specs=artifact_specs,
+            before_snapshot=(
+                before_artifact_snapshot
+            ),
+            runtime_root=runtime_root,
+        )
+    except BaseException as artifact_error:
+        manifest[
+            "artifact_manifest"
+        ] = {
+            "status": "write_failed",
+            "error": exception_payload(
+                artifact_error
+            ),
+        }
+
+        manifest[
+            "artifact_tracking"
+        ]["status"] = "write_failed"
+
+        manifest = fail_run_manifest(
+            manifest,
+            error={
+                "type": (
+                    "ArtifactManifestWriteError"
+                ),
+                "message": (
+                    "Artifact manifest generation "
+                    "or persistence failed."
+                ),
+                "cause": exception_payload(
+                    artifact_error
+                ),
+            },
+            finished_at=utc_now(),
+            duration_seconds=(
+                total_elapsed
+            ),
+        )
+
+        write_run_manifest(
+            manifest,
+            manifest_path,
+        )
+
+        raise
+
+    manifest[
+        "artifact_manifest"
+    ] = artifact_reference
+
+    manifest[
+        "artifact_tracking"
+    ]["status"] = artifact_manifest[
+        "status"
+    ]
+
+    if artifact_manifest["status"] != "valid":
+        manifest = fail_run_manifest(
+            manifest,
+            error={
+                "type": (
+                    "ArtifactManifestValidationError"
+                ),
+                "message": (
+                    "Required Phase 2 artifacts "
+                    "are missing or removed."
+                ),
+                "missing_required_specs": (
+                    artifact_manifest[
+                        "missing_required_specs"
+                    ]
+                ),
+                "removed_required_paths": (
+                    artifact_manifest[
+                        "removed_required_paths"
+                    ]
+                ),
+            },
+            finished_at=utc_now(),
+            duration_seconds=(
+                total_elapsed
+            ),
+        )
+
+        write_run_manifest(
+            manifest,
+            manifest_path,
+        )
+
+        raise RuntimeError(
+            "Artifact manifest validation failed."
+        )
 
     manifest = succeed_run_manifest(
         manifest,

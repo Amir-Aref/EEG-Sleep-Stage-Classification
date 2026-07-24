@@ -68,10 +68,13 @@ class PipelineRunnerProvenanceTests(
 
     def path_contract(
         self,
+        runtime_root: Path,
     ) -> dict[str, object]:
         return {
             "project_root": "/repo",
-            "runtime_root": "/runtime",
+            "runtime_root": str(
+                runtime_root
+            ),
             "sleep_edfx_raw_dir": (
                 "/input/sleep-cassette"
             ),
@@ -160,7 +163,9 @@ class PipelineRunnerProvenanceTests(
                     runner,
                     "runtime_path_contract",
                     return_value=(
-                        self.path_contract()
+                        self.path_contract(
+                            reports_dir.parent
+                        )
                     ),
                 ),
                 mock.patch.object(
@@ -287,7 +292,9 @@ class PipelineRunnerProvenanceTests(
                     runner,
                     "runtime_path_contract",
                     return_value=(
-                        self.path_contract()
+                        self.path_contract(
+                            reports_dir.parent
+                        )
                     ),
                 ),
                 mock.patch.object(
