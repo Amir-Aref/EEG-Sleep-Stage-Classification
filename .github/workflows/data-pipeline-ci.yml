@@ -1,4 +1,4 @@
-name: Data Pipeline CI
+name: EEG Pipeline CI
 
 on:
   push:
@@ -12,10 +12,10 @@ permissions:
   contents: read
 
 jobs:
-  phase2-contracts:
-    name: Phase 2 contracts
+  contracts-and-tracking:
+    name: Phase 2, Phase 3, and MLflow contracts
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     env:
       MPLBACKEND: Agg
@@ -33,19 +33,28 @@ jobs:
           cache-dependency-path: requirements.txt
 
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
 
-      - name: Verify scientific dependencies
+      - name: Verify project dependencies
         run: |
           python -c "import mne; print('MNE:', mne.__version__)"
           python -c "import numpy, pandas, scipy, sklearn; print('Scientific imports: PASS')"
           python -c "import matplotlib, seaborn, sqlalchemy, joblib; print('Project imports: PASS')"
+          python -c "import mlflow; print('MLflow:', mlflow.__version__)"
 
       - name: Compile Python sources
         run: python -m compileall -q pipeline.py scripts tests
 
-      - name: Run Phase 2 contracts
+      - name: Validate MLflow configuration and local artifacts
+        run: |
+          python scripts/mlflow_tracking.py validate-config
+          python scripts/mlflow_tracking.py validate-local
+          python scripts/mlflow_tracking.py init --tracking-root "${RUNNER_TEMP}/eeg-mlflow-ci"
+
+      - name: Run contract tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
 
-      - name: Validate portable pipeline plan
+      - name: Validate portable Phase 2 pipeline plan
         run: python scripts/run_phase2_pipeline.py --plan

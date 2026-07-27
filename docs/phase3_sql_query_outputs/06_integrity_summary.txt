@@ -1,0 +1,4 @@
+PRAGMA integrity_check: ok
+Foreign-key violations: 0
+Invalid probability-sum rows: 0
+Duplicate epoch identifiers within runs: 0

@@ -1,0 +1,6 @@
+predicted_label,prediction_count,mean_confidence,mean_normalized_entropy
+N2,522,0.919862,0.158309
+REM,185,0.818915,0.335734
+Wake,167,0.828108,0.308335
+N3,118,0.921999,0.140405
+N1,111,0.690245,0.500095

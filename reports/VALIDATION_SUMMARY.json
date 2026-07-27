@@ -1,0 +1,104 @@
+{
+  "archive_content": {
+    "cache_files_included": false,
+    "file_count": 156,
+    "git_metadata_included": false,
+    "raw_edf_files_included": 0,
+    "total_size_bytes": 35965027,
+    "virtual_environment_included": false
+  },
+  "project_progress_percent": 93,
+  "remaining_percent": 7,
+  "review_date": "2026-07-27",
+  "review_environment": {
+    "mlflow_installed": false,
+    "note": "The review package index did not provide the project MLflow/NumPy pins; real MLflow integration remains a user-environment acceptance step.",
+    "platform": "Linux-6.12.13-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "schema_version": "1.0.0",
+  "scientific_safety": {
+    "champion_alias_local_blocked": true,
+    "full_dataset_results_fabricated": false,
+    "full_scientific_reporting_status": "BLOCKED_PENDING_FULL_OUTER_EVALUATION",
+    "local_metrics_are_final": false,
+    "local_registry_separate": true
+  },
+  "source_commit": "11c9ff4f2d79c16f0ac26744212a244d4604dc32",
+  "validation": {
+    "dependency_resolution": {
+      "known_conflict_resolved": "pandas was changed from 3.0.3 to 2.3.3 for MLflow 3.14 compatibility.",
+      "reason": "The private review package mirror did not expose numpy==2.5.1.",
+      "status": "NOT_VERIFIED_IN_REVIEW_ENVIRONMENT"
+    },
+    "docker_build_run": {
+      "status": "PENDING_USER_ENVIRONMENT"
+    },
+    "github_actions": {
+      "status": "PENDING_PUSH"
+    },
+    "local_phase3_artifact_validation": {
+      "final_model_count": 1,
+      "model_hash_count": 5,
+      "outer_model_count": 4,
+      "scientific_reporting_allowed": false,
+      "scope": "local_validation",
+      "source_hash_count": 22,
+      "status": "PASS"
+    },
+    "mlflow_configuration": {
+      "status": "PASS"
+    },
+    "phase2_pipeline_plan": {
+      "commands_executed": false,
+      "status": "PASS"
+    },
+    "python_compile": {
+      "status": "PASS",
+      "targets": [
+        "pipeline.py",
+        "scripts",
+        "tests"
+      ]
+    },
+    "sqlite": {
+      "database/sleep_eeg.db": {
+        "foreign_key_violations": 0,
+        "integrity": "ok",
+        "row_counts": {
+          "eeg_epochs": 2650,
+          "subjects": 1
+        },
+        "status": "PASS"
+      },
+      "sqlite-db/phase3_runtime/phase3_predictions.sqlite3": {
+        "duplicate_epoch_identifiers": 0,
+        "foreign_key_violations": 0,
+        "integrity": "ok",
+        "invalid_probability_sum_rows": 0,
+        "row_counts": {
+          "prediction_rows": 1103,
+          "prediction_runs": 1
+        },
+        "status": "PASS"
+      }
+    },
+    "structured_file_audit": {
+      "csv_files": 36,
+      "docx_container_integrity": "PASS",
+      "image_files": 21,
+      "json_files": 19,
+      "notebook_json_validation": "PASS",
+      "pdf_header_validation": "PASS",
+      "status": "PASS"
+    },
+    "unit_tests": {
+      "errors": 0,
+      "failed": 0,
+      "skipped": 1,
+      "skipped_reason": "Real MLflow SQLite integration test requires MLflow to be installed.",
+      "status": "PASS",
+      "tests_run": 177
+    }
+  }
+}
