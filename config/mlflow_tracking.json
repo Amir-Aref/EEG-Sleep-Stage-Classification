@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "EEG Sleep Stage Classification",
+  "tracking": {
+    "root_directory": "mlflow",
+    "backend_database": "mlflow.db",
+    "artifact_directory": "artifacts",
+    "summary_path": "data/metadata/mlflow_tracking_summary.json"
+  },
+  "registered_models": {
+    "local_validation": "EEG_Sleep_Stage_Classifier_Local_Validation",
+    "full_dataset": "EEG_Sleep_Stage_Classifier"
+  },
+  "default_tags": {
+    "project": "eeg-sleep-stage-classification",
+    "task": "multiclass-sleep-stage-classification",
+    "dataset": "sleep-edf-expanded-sleep-cassette",
+    "primary_metric": "macro_f1",
+    "grouping_unit": "subject_id"
+  },
+  "safety": {
+    "require_exact_model_runtime": true,
+    "allow_local_scientific_reporting": false,
+    "register_local_validation_model": true,
+    "promote_full_model_alias": "champion"
+  }
+}

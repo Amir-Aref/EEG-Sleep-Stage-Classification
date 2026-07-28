@@ -1,0 +1,1 @@
+subject_id,recording_id,night,epoch_id,true_label,predicted_label,prediction_confidence,prediction_margin,prediction_normalized_entropy

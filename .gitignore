@@ -40,3 +40,12 @@ data/processed/sleep_edfx_epoch_features.csv
 
 # Generated model-input dataset
 data/processed/sleep_edfx_model_input.csv
+
+# MLflow local tracking state
+mlflow/
+data/metadata/mlflow_tracking_summary.json
+
+# Local review and inventory archives
+_project_inventory.zip
+EEG-project-review*.zip
+*.log
