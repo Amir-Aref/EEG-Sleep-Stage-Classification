@@ -133,6 +133,17 @@ class MlflowTrackingUnitTests(unittest.TestCase):
         self.assertEqual(first["candidate.a.z"], "[3,1]")
 
     def test_local_artifacts_validate_without_mlflow(self) -> None:
+        model_input_path = (
+            tracking.PROJECT_ROOT
+            / "data"
+            / "processed"
+            / "sleep_edfx_model_input.csv"
+        )
+        if not model_input_path.is_file():
+            self.skipTest(
+                "Generated local Phase 3 model-input artifact is unavailable."
+            )
+
         result = tracking.validate_local_artifacts()
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["outer_model_count"], 4)
@@ -261,10 +272,22 @@ class MlflowTrackingUnitTests(unittest.TestCase):
                     artifact_uri=(temporary_root / "mlflow" / "artifacts").as_uri(),
                 ),
             )
-            with patch.object(
-                tracking,
-                "initialize_tracking",
-                return_value=fake_context,
+            with (
+                patch.object(
+                    tracking,
+                    "initialize_tracking",
+                    return_value=fake_context,
+                ),
+                patch.object(
+                    tracking,
+                    "validate_source_hashes",
+                    return_value=[],
+                ),
+                patch.object(
+                    tracking,
+                    "validate_model_manifest",
+                    return_value=[],
+                ),
             ):
                 summary = tracking.import_phase3_artifacts(
                     inputs=tracking.local_import_inputs(),
