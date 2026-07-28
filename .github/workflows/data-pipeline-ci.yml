@@ -49,10 +49,11 @@ jobs:
       - name: Compile Python sources
         run: python -m compileall -q pipeline.py scripts tests
 
-      - name: Validate MLflow configuration and local artifacts
+      - name: Validate MLflow configuration and initialize CI tracking store
         run: |
           python scripts/mlflow_tracking.py validate-config
-          python scripts/mlflow_tracking.py validate-local
+          # Full local artifact validation requires generated dataset artifacts
+          # that are intentionally excluded from fresh repository clones.
           python scripts/mlflow_tracking.py init --tracking-root "${RUNNER_TEMP}/eeg-mlflow-ci"
 
       - name: Run contract tests
