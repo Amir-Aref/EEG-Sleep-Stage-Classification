@@ -1,0 +1,49 @@
+{
+  "artifact_type": "phase3_full_prediction_store_report",
+  "created_at_utc": "2026-07-29T16:54:28.707158+00:00",
+  "database": {
+    "audit": {
+      "foreign_key_issue_count": 0,
+      "prediction_row_count": 195469,
+      "prediction_run_count": 1,
+      "quick_check": [
+        "ok"
+      ]
+    },
+    "idempotent_second_insert": false,
+    "initial_insert": true,
+    "path": "/kaggle/working/eeg-runtime-full/sqlite-db/phase3_full_predictions.sqlite3",
+    "run_id": "e80c7b15b16d7e979a8f962900bf616fc12f9929fd4fb4e23aad5bf28e3bd916"
+  },
+  "execution": {
+    "finished_at_utc": "2026-07-29T16:53:33.096027+00:00",
+    "prediction_elapsed_seconds": 14.75587479699999,
+    "started_at_utc": "2026-07-29T16:53:18.340002+00:00"
+  },
+  "input_scope": "full_dataset_refit_inference_audit",
+  "model": {
+    "candidate_id": "random_forest__candidate_002",
+    "deployment_ready": true,
+    "model_name": "random_forest",
+    "model_path": "/kaggle/working/eeg-runtime-full/artifacts/models/phase3_full_final_refit/phase3_full_final_refit.joblib",
+    "model_sha256": "354484d39f5313981c1d164e30738adfafe0d18d33ee5da9854584a16337f820"
+  },
+  "predictions": {
+    "csv_path": "/kaggle/working/eeg-runtime-full/data/predictions/phase3_full_final_refit_predictions.csv",
+    "csv_sha256": "fac7b280cf1c0c7a9967b7c7a5ad85d2b5361d9352ef01ea0e9388885815de07",
+    "mean_confidence": 0.7749754586229398,
+    "mean_margin": 0.6386964269125295,
+    "predicted_class_counts": {
+      "N1": 22777,
+      "N2": 64185,
+      "N3": 14395,
+      "REM": 29236,
+      "Wake": 64876
+    },
+    "prediction_sha256": "fac7b280cf1c0c7a9967b7c7a5ad85d2b5361d9352ef01ea0e9388885815de07",
+    "row_count": 195469
+  },
+  "schema_version": "1.0",
+  "scientific_evaluation_allowed": false,
+  "status": "PASS"
+}

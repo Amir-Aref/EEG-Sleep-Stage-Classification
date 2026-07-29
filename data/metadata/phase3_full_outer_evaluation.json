@@ -1,0 +1,1637 @@
+{
+  "aggregate": {
+    "mean_outer_balanced_accuracy": 0.6675705737321458,
+    "mean_outer_macro_f1": 0.6586621782971285,
+    "outer_fold_count": 5,
+    "outer_fold_metric_summary": {
+      "accuracy": {
+        "maximum": 0.7557267697399038,
+        "mean": 0.7284056675591557,
+        "minimum": 0.7023878053834995,
+        "std": 0.019943465695073815
+      },
+      "balanced_accuracy": {
+        "maximum": 0.6819102317106046,
+        "mean": 0.6675705737321458,
+        "minimum": 0.6453505984172726,
+        "std": 0.012689026847065507
+      },
+      "cohen_kappa": {
+        "maximum": 0.6702062136208976,
+        "mean": 0.6283588592454833,
+        "minimum": 0.5962642739948395,
+        "std": 0.027552237536865296
+      },
+      "macro_f1": {
+        "maximum": 0.6787546142180076,
+        "mean": 0.6586621782971285,
+        "minimum": 0.6423028596212575,
+        "std": 0.011977251015104641
+      },
+      "multiclass_log_loss": {
+        "maximum": 0.7359945023810822,
+        "mean": 0.6981679075532912,
+        "minimum": 0.6534663120545204,
+        "std": 0.031930878887180124
+      },
+      "weighted_f1": {
+        "maximum": 0.7536035035148259,
+        "mean": 0.7306675520932029,
+        "minimum": 0.7132409650125462,
+        "std": 0.015818933093570374
+      }
+    },
+    "pooled_test_metrics": {
+      "accuracy": 0.7279875581294221,
+      "balanced_accuracy": 0.6704156757775286,
+      "class_count": 5,
+      "class_mapping": {
+        "N1": 1,
+        "N2": 2,
+        "N3": 3,
+        "REM": 4,
+        "Wake": 0
+      },
+      "class_order": [
+        "Wake",
+        "N1",
+        "N2",
+        "N3",
+        "REM"
+      ],
+      "cohen_kappa": 0.6290179887671079,
+      "confusion_matrix": {
+        "encoded_labels": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "labels": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "normalized_by_true_class": [
+          [
+            0.8410852125384813,
+            0.0835898757980619,
+            0.014391653144477639,
+            0.0043068803930786615,
+            0.05662637812590043
+          ],
+          [
+            0.18553108447170338,
+            0.31948703652076943,
+            0.23074063748722237,
+            0.004739336492890996,
+            0.2595019050274138
+          ],
+          [
+            0.0316929931146213,
+            0.06541109761036858,
+            0.7806515072614708,
+            0.04016953075276283,
+            0.08207487126077649
+          ],
+          [
+            0.0350487000536851,
+            0.0012270879668686248,
+            0.14318582713398267,
+            0.8171638929365749,
+            0.0033744919088887185
+          ],
+          [
+            0.10907683375266111,
+            0.17124056512483066,
+            0.12169537449196827,
+            0.004296497000193536,
+            0.5936907296303464
+          ]
+        ],
+        "raw": [
+          [
+            55462,
+            5512,
+            949,
+            284,
+            3734
+          ],
+          [
+            3993,
+            6876,
+            4966,
+            102,
+            5585
+          ],
+          [
+            2191,
+            4522,
+            53968,
+            2777,
+            5674
+          ],
+          [
+            457,
+            16,
+            1867,
+            10655,
+            44
+          ],
+          [
+            2818,
+            4424,
+            3144,
+            111,
+            15338
+          ]
+        ]
+      },
+      "macro_f1": 0.6619362169048647,
+      "mean_confidence_when_correct": 0.7695572165070238,
+      "mean_confidence_when_incorrect": 0.5357495589812409,
+      "mean_normalized_entropy": 0.4588385069142581,
+      "mean_prediction_confidence": 0.7059586246553958,
+      "mean_prediction_margin": 0.529691294195864,
+      "multiclass_log_loss": 0.6977586236395957,
+      "per_class": [
+        {
+          "class_encoded": 0,
+          "class_name": "Wake",
+          "f1": 0.8476410264247833,
+          "precision": 0.8542998413456354,
+          "recall": 0.8410852125384813,
+          "support": 65941
+        },
+        {
+          "class_encoded": 1,
+          "class_name": "N1",
+          "f1": 0.3207688001492816,
+          "precision": 0.3220608899297424,
+          "recall": 0.31948703652076943,
+          "support": 21522
+        },
+        {
+          "class_encoded": 2,
+          "class_name": "N2",
+          "f1": 0.805336278035605,
+          "precision": 0.831633124788116,
+          "recall": 0.7806515072614708,
+          "support": 69132
+        },
+        {
+          "class_encoded": 3,
+          "class_name": "N3",
+          "f1": 0.7901957876001187,
+          "precision": 0.764950822025989,
+          "recall": 0.8171638929365749,
+          "support": 13039
+        },
+        {
+          "class_encoded": 4,
+          "class_name": "REM",
+          "f1": 0.5457391923145348,
+          "precision": 0.5049547325102881,
+          "recall": 0.5936907296303464,
+          "support": 25835
+        }
+      ],
+      "predict_probability_argmax_agreement": 1.0,
+      "predict_probability_argmax_mismatch_count": 0,
+      "primary_metric_name": "macro_f1",
+      "sample_count": 195469,
+      "schema_version": "1.0.0",
+      "weighted_f1": 0.7309339359254452
+    },
+    "prediction_row_count": 195469,
+    "std_outer_balanced_accuracy": 0.012689026847065507,
+    "std_outer_macro_f1": 0.011977251015104641
+  },
+  "artifact_type": "phase3_full_outer_evaluation",
+  "complete_outer_evaluation": true,
+  "dataset_contract": {
+    "class_mapping": {
+      "N1": 1,
+      "N2": 2,
+      "N3": 3,
+      "REM": 4,
+      "Wake": 0
+    },
+    "feature_count": 28,
+    "group_column": "subject_id",
+    "row_count": 195469,
+    "subject_count": 78,
+    "target_column": "sleep_stage_encoded"
+  },
+  "evaluated_outer_folds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "evaluation_contract": {
+    "each_epoch_tested_once_when_complete": true,
+    "hyperparameter_search_performed": false,
+    "selection_artifact_frozen": true,
+    "test_access_stage": "after_inner_model_selection"
+  },
+  "execution": {
+    "elapsed_seconds": 1505.940100885,
+    "finished_at_utc": "2026-07-29T09:36:37.539985+00:00",
+    "frozen_selection_artifact": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_inner_model_selection.json",
+    "hyperparameter_search_performed": false,
+    "started_at_utc": "2026-07-29T09:11:31.599785+00:00"
+  },
+  "intended_use": "full_dataset_scientific_evaluation",
+  "outer_results": [
+    {
+      "candidate_id": "random_forest__candidate_007",
+      "candidate_parameters": {
+        "classifier__max_depth": 12,
+        "classifier__max_features": 0.5,
+        "classifier__min_samples_leaf": 1
+      },
+      "development_row_count": 152040,
+      "metrics": {
+        "accuracy": 0.7023878053834995,
+        "balanced_accuracy": 0.6647526874029424,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.5962642739948395,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.765769088897086,
+              0.11729988933972704,
+              0.0161072175089143,
+              0.005041190212713636,
+              0.09578261404155908
+            ],
+            [
+              0.1719077568134172,
+              0.40391334730957373,
+              0.1916491963661775,
+              0.0029699510831586303,
+              0.22955974842767296
+            ],
+            [
+              0.018509218738790443,
+              0.09548748116794605,
+              0.7860678671353756,
+              0.032570485687639,
+              0.06736494727024894
+            ],
+            [
+              0.017374517374517374,
+              0.00048262548262548264,
+              0.19305019305019305,
+              0.7886100386100386,
+              0.00048262548262548264
+            ],
+            [
+              0.07111274871039057,
+              0.26160648489314664,
+              0.08769344141488578,
+              0.00018422991893883567,
+              0.5794030950626382
+            ]
+          ],
+          "raw": [
+            [
+              12456,
+              1908,
+              262,
+              82,
+              1558
+            ],
+            [
+              984,
+              2312,
+              1097,
+              17,
+              1314
+            ],
+            [
+              258,
+              1331,
+              10957,
+              454,
+              939
+            ],
+            [
+              36,
+              1,
+              400,
+              1634,
+              1
+            ],
+            [
+              386,
+              1420,
+              476,
+              1,
+              3145
+            ]
+          ]
+        },
+        "macro_f1": 0.6533559520770679,
+        "mean_confidence_when_correct": 0.7624541236706776,
+        "mean_confidence_when_incorrect": 0.5297400661607385,
+        "mean_normalized_entropy": 0.47961258634009035,
+        "mean_prediction_confidence": 0.6931955822970343,
+        "mean_prediction_margin": 0.5087165803952162,
+        "multiclass_log_loss": 0.7209466899957456,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.8198512472849339,
+            "precision": 0.8821529745042493,
+            "recall": 0.765769088897086,
+            "support": 16266
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.36420919974795213,
+            "precision": 0.33161216293746415,
+            "recall": 0.40391334730957373,
+            "support": 5724
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.8077107367955475,
+            "precision": 0.8305791388720437,
+            "recall": 0.7860678671353756,
+            "support": 13939
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.7671361502347418,
+            "precision": 0.746800731261426,
+            "recall": 0.7886100386100386,
+            "support": 2072
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.5078724263221639,
+            "precision": 0.45206267069138995,
+            "recall": 0.5794030950626382,
+            "support": 5428
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 43429,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7143924898397439
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        1,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        17,
+        18,
+        20,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        3,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        40,
+        41,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        5,
+        51,
+        52,
+        53,
+        55,
+        57,
+        58,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        67,
+        7,
+        70,
+        71,
+        76,
+        77,
+        8,
+        80,
+        81,
+        82,
+        9
+      ],
+      "outer_fold": 1,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7025959568878433,
+        "mean_balanced_accuracy": 0.6696479832852162,
+        "mean_cohen_kappa": 0.6028119109304314,
+        "mean_macro_f1": 0.6516932614353145,
+        "mean_multiclass_log_loss": 0.7391494202776365,
+        "mean_weighted_f1": 0.7171921915809477,
+        "std_accuracy": 0.008470042869166026,
+        "std_balanced_accuracy": 0.01156389716881285,
+        "std_cohen_kappa": 0.01364754266933312,
+        "std_macro_f1": 0.005296124229882943,
+        "std_multiclass_log_loss": 0.004315681169293271,
+        "std_weighted_f1": 0.0022399782977905896
+      },
+      "test_row_count": 43429,
+      "test_subjects": [
+        14,
+        19,
+        2,
+        21,
+        4,
+        42,
+        50,
+        54,
+        56,
+        59,
+        6,
+        66,
+        72,
+        73,
+        74,
+        75
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 160982,
+      "metrics": {
+        "accuracy": 0.7325079015281121,
+        "balanced_accuracy": 0.6684175841900954,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6320295051978373,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.8580956289759901,
+              0.05951159450030782,
+              0.017032628770777755,
+              0.00964498255694644,
+              0.055715165195977835
+            ],
+            [
+              0.13864067154075277,
+              0.24776604386677498,
+              0.31789872732196045,
+              0.007040346601678852,
+              0.2886542106688329
+            ],
+            [
+              0.02332062188325022,
+              0.050968025814021704,
+              0.8059548254620124,
+              0.04004106776180698,
+              0.07971545907890877
+            ],
+            [
+              0.05256003624830086,
+              0.005437245129134572,
+              0.12143180788400544,
+              0.8173991844132307,
+              0.0031717263253285004
+            ],
+            [
+              0.08107588856868396,
+              0.13487031700288185,
+              0.15677233429394813,
+              0.01440922190201729,
+              0.6128722382324687
+            ]
+          ],
+          "raw": [
+            [
+              8363,
+              580,
+              166,
+              94,
+              543
+            ],
+            [
+              512,
+              915,
+              1174,
+              26,
+              1066
+            ],
+            [
+              318,
+              695,
+              10990,
+              546,
+              1087
+            ],
+            [
+              116,
+              12,
+              268,
+              1804,
+              7
+            ],
+            [
+              422,
+              702,
+              816,
+              75,
+              3190
+            ]
+          ]
+        },
+        "macro_f1": 0.6565724462900026,
+        "mean_confidence_when_correct": 0.7771281521612221,
+        "mean_confidence_when_incorrect": 0.5452657834831698,
+        "mean_normalized_entropy": 0.4481220308539705,
+        "mean_prediction_confidence": 0.7151068006068673,
+        "mean_prediction_margin": 0.5449519923206952,
+        "multiclass_log_loss": 0.712837722496903,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.8587564820044155,
+            "precision": 0.8594183537149317,
+            "recall": 0.8580956289759901,
+            "support": 9746
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.2773988176443838,
+            "precision": 0.31508264462809915,
+            "recall": 0.24776604386677498,
+            "support": 3693
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.8125693160813309,
+            "precision": 0.8192932756821232,
+            "recall": 0.8059548254620124,
+            "support": 13636
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.7592592592592593,
+            "precision": 0.7088408644400785,
+            "recall": 0.8173991844132307,
+            "support": 2207
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.5748783564606236,
+            "precision": 0.5413202104191414,
+            "recall": 0.6128722382324687,
+            "support": 5205
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 34487,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7290282347500073
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        19,
+        2,
+        20,
+        21,
+        22,
+        25,
+        26,
+        29,
+        30,
+        31,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        4,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        5,
+        50,
+        51,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        6,
+        60,
+        62,
+        64,
+        65,
+        66,
+        7,
+        70,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        8,
+        80,
+        81,
+        82,
+        9
+      ],
+      "outer_fold": 2,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7297145578685775,
+        "mean_balanced_accuracy": 0.665531895433077,
+        "mean_cohen_kappa": 0.6290608475880903,
+        "mean_macro_f1": 0.6580939511423748,
+        "mean_multiclass_log_loss": 0.6943531382849922,
+        "mean_weighted_f1": 0.7294393220354753,
+        "std_accuracy": 0.01878409394546051,
+        "std_balanced_accuracy": 0.005777954175794409,
+        "std_cohen_kappa": 0.021172027929315287,
+        "std_macro_f1": 0.011155072867585885,
+        "std_multiclass_log_loss": 0.04566877583854619,
+        "std_weighted_f1": 0.015633330522553522
+      },
+      "test_row_count": 34487,
+      "test_subjects": [
+        1,
+        10,
+        11,
+        18,
+        23,
+        24,
+        27,
+        28,
+        3,
+        32,
+        52,
+        61,
+        63,
+        67,
+        71
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 154098,
+      "metrics": {
+        "accuracy": 0.7420415266732735,
+        "balanced_accuracy": 0.6774217669398139,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.642987229236454,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.8647197045988587,
+              0.07881839543470963,
+              0.01302450486740517,
+              0.0014098690835850957,
+              0.04202752601544142
+            ],
+            [
+              0.2025658338960162,
+              0.29169480081026333,
+              0.24105334233625927,
+              0.007877560207067296,
+              0.2568084627503939
+            ],
+            [
+              0.031062261059530312,
+              0.0445794647733479,
+              0.7801064991807756,
+              0.04608137629710541,
+              0.09817039868924085
+            ],
+            [
+              0.02334784329244163,
+              0.0,
+              0.13098535813217255,
+              0.8369608231104076,
+              0.008705975464978234
+            ],
+            [
+              0.10436393577603953,
+              0.1508851379168382,
+              0.12844792095512556,
+              0.0026759983532317825,
+              0.6136270069987649
+            ]
+          ],
+          "raw": [
+            [
+              12880,
+              1174,
+              194,
+              21,
+              626
+            ],
+            [
+              900,
+              1296,
+              1071,
+              35,
+              1141
+            ],
+            [
+              455,
+              653,
+              11427,
+              675,
+              1438
+            ],
+            [
+              59,
+              0,
+              331,
+              2115,
+              22
+            ],
+            [
+              507,
+              733,
+              624,
+              13,
+              2981
+            ]
+          ]
+        },
+        "macro_f1": 0.6623250192793069,
+        "mean_confidence_when_correct": 0.7680509810998292,
+        "mean_confidence_when_incorrect": 0.5333195826556263,
+        "mean_normalized_entropy": 0.4569953594856575,
+        "mean_prediction_confidence": 0.7075000279153151,
+        "mean_prediction_margin": 0.5325453463988492,
+        "multiclass_log_loss": 0.6675943108382046,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.8674568965517241,
+            "precision": 0.8702114721978245,
+            "recall": 0.8647197045988587,
+            "support": 14895
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.3123267863598024,
+            "precision": 0.3360995850622407,
+            "recall": 0.29169480081026333,
+            "support": 4443
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.8077045414384166,
+            "precision": 0.8373268850296769,
+            "recall": 0.7801064991807756,
+            "support": 14648
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.785369476420349,
+            "precision": 0.7397691500524659,
+            "recall": 0.8369608231104076,
+            "support": 2527
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.5387673956262425,
+            "precision": 0.4801868556701031,
+            "recall": 0.6136270069987649,
+            "support": 4858
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 41371,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7430725673488909
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        1,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        18,
+        19,
+        2,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        3,
+        30,
+        31,
+        32,
+        34,
+        35,
+        36,
+        37,
+        4,
+        40,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        50,
+        52,
+        54,
+        55,
+        56,
+        57,
+        59,
+        6,
+        61,
+        62,
+        63,
+        64,
+        66,
+        67,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        8,
+        81,
+        82,
+        9
+      ],
+      "outer_fold": 3,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.722990348417344,
+        "mean_balanced_accuracy": 0.660236182023137,
+        "mean_cohen_kappa": 0.620539785925632,
+        "mean_macro_f1": 0.6540181385106342,
+        "mean_multiclass_log_loss": 0.7166445704703222,
+        "mean_weighted_f1": 0.7233751722446154,
+        "std_accuracy": 0.021207934641975856,
+        "std_balanced_accuracy": 0.011505776867329218,
+        "std_cohen_kappa": 0.027430194064623714,
+        "std_macro_f1": 0.010142616050475233,
+        "std_multiclass_log_loss": 0.052362782438988086,
+        "std_weighted_f1": 0.015971388727328704
+      },
+      "test_row_count": 41371,
+      "test_subjects": [
+        16,
+        33,
+        38,
+        41,
+        48,
+        49,
+        5,
+        51,
+        53,
+        58,
+        60,
+        65,
+        7,
+        70,
+        80
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 156791,
+      "metrics": {
+        "accuracy": 0.7557267697399038,
+        "balanced_accuracy": 0.6819102317106046,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6702062136208976,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.8707536118703632,
+              0.0702069504099961,
+              0.011870363139398673,
+              0.0020304568527918783,
+              0.04513861772745022
+            ],
+            [
+              0.19070609535304767,
+              0.2703681351840676,
+              0.2100181050090525,
+              0.0051297525648762825,
+              0.32377791188895594
+            ],
+            [
+              0.04476915902378362,
+              0.039250738380226954,
+              0.7904554640136795,
+              0.05425151562257112,
+              0.07127312295973885
+            ],
+            [
+              0.042938931297709926,
+              0.0,
+              0.1028148854961832,
+              0.8528148854961832,
+              0.0014312977099236641
+            ],
+            [
+              0.1327031448827486,
+              0.09725504453735684,
+              0.14306489729140157,
+              0.0018178512997636793,
+              0.6251590619887293
+            ]
+          ],
+          "raw": [
+            [
+              11150,
+              899,
+              152,
+              26,
+              578
+            ],
+            [
+              632,
+              896,
+              696,
+              17,
+              1073
+            ],
+            [
+              576,
+              505,
+              10170,
+              698,
+              917
+            ],
+            [
+              180,
+              0,
+              431,
+              3575,
+              6
+            ],
+            [
+              730,
+              535,
+              787,
+              10,
+              3439
+            ]
+          ]
+        },
+        "macro_f1": 0.6787546142180076,
+        "mean_confidence_when_correct": 0.7780248343300004,
+        "mean_confidence_when_incorrect": 0.5453484018851199,
+        "mean_normalized_entropy": 0.43941838600390876,
+        "mean_prediction_confidence": 0.7211882105712942,
+        "mean_prediction_margin": 0.5557181810257095,
+        "multiclass_log_loss": 0.6534663120545204,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.8552909139723085,
+            "precision": 0.8403678022309315,
+            "recall": 0.8707536118703632,
+            "support": 12805
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.29142950073182633,
+            "precision": 0.3160493827160494,
+            "recall": 0.2703681351840676,
+            "support": 3314
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.8102940004780496,
+            "precision": 0.8311539718862373,
+            "recall": 0.7904554640136795,
+            "support": 12866
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.8393989199342569,
+            "precision": 0.8263985205732779,
+            "recall": 0.8528148854961832,
+            "support": 4192
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.5973597359735974,
+            "precision": 0.5719274904373857,
+            "recall": 0.6251590619887293,
+            "support": 5501
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 38678,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7536035035148259
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        1,
+        10,
+        11,
+        14,
+        16,
+        18,
+        19,
+        2,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+        27,
+        28,
+        3,
+        30,
+        32,
+        33,
+        34,
+        35,
+        37,
+        38,
+        4,
+        41,
+        42,
+        44,
+        45,
+        48,
+        49,
+        5,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        6,
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        7,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        80,
+        81,
+        9
+      ],
+      "outer_fold": 4,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7153353503896017,
+        "mean_balanced_accuracy": 0.651059853353347,
+        "mean_cohen_kappa": 0.6075259475017527,
+        "mean_macro_f1": 0.6398620370480208,
+        "mean_multiclass_log_loss": 0.7218107154634311,
+        "mean_weighted_f1": 0.7150928840642136,
+        "std_accuracy": 0.017300947020870202,
+        "std_balanced_accuracy": 0.017415074400997238,
+        "std_cohen_kappa": 0.023573976644580177,
+        "std_macro_f1": 0.014897004679337222,
+        "std_multiclass_log_loss": 0.04229088901657559,
+        "std_weighted_f1": 0.011156139954348927
+      },
+      "test_row_count": 38678,
+      "test_subjects": [
+        0,
+        12,
+        13,
+        15,
+        17,
+        25,
+        29,
+        31,
+        36,
+        40,
+        43,
+        46,
+        47,
+        64,
+        77,
+        8,
+        82
+      ]
+    },
+    {
+      "candidate_id": "random_forest__candidate_004",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": 0.5,
+        "classifier__min_samples_leaf": 4
+      },
+      "development_row_count": 157965,
+      "metrics": {
+        "accuracy": 0.7093643344709898,
+        "balanced_accuracy": 0.6453505984172726,
+        "class_count": 5,
+        "class_mapping": {
+          "N1": 1,
+          "N2": 2,
+          "N3": 3,
+          "REM": 4,
+          "Wake": 0
+        },
+        "class_order": [
+          "Wake",
+          "N1",
+          "N2",
+          "N3",
+          "REM"
+        ],
+        "cohen_kappa": 0.6003070741773877,
+        "confusion_matrix": {
+          "encoded_labels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "labels": [
+            "Wake",
+            "N1",
+            "N2",
+            "N3",
+            "REM"
+          ],
+          "normalized_by_true_class": [
+            [
+              0.8678550985362663,
+              0.07776596614604628,
+              0.014310246136233544,
+              0.004988142938915692,
+              0.03508054624253823
+            ],
+            [
+              0.2219411223551058,
+              0.33509659613615456,
+              0.21343146274149033,
+              0.001609935602575897,
+              0.2279208831646734
+            ],
+            [
+              0.041586555579292174,
+              0.09527878658406323,
+              0.7422915331481877,
+              0.028768781599373353,
+              0.09207434308908354
+            ],
+            [
+              0.03233708966193043,
+              0.0014698677119059284,
+              0.21411073003429693,
+              0.7481626653601176,
+              0.0039196472317491425
+            ],
+            [
+              0.15961181086103654,
+              0.21350402642989882,
+              0.09105926078876729,
+              0.0024778030146603344,
+              0.533347098905637
+            ]
+          ],
+          "raw": [
+            [
+              10613,
+              951,
+              175,
+              61,
+              429
+            ],
+            [
+              965,
+              1457,
+              928,
+              7,
+              991
+            ],
+            [
+              584,
+              1338,
+              10424,
+              404,
+              1293
+            ],
+            [
+              66,
+              3,
+              437,
+              1527,
+              8
+            ],
+            [
+              773,
+              1034,
+              441,
+              12,
+              2583
+            ]
+          ]
+        },
+        "macro_f1": 0.6423028596212575,
+        "mean_confidence_when_correct": 0.7629472036962963,
+        "mean_confidence_when_incorrect": 0.5288806014826917,
+        "mean_normalized_entropy": 0.4666980926476676,
+        "mean_prediction_confidence": 0.6949191009838313,
+        "mean_prediction_margin": 0.5099566586082681,
+        "multiclass_log_loss": 0.7359945023810822,
+        "per_class": [
+          {
+            "class_encoded": 0,
+            "class_name": "Wake",
+            "f1": 0.8413000396353547,
+            "precision": 0.816321821398354,
+            "recall": 0.8678550985362663,
+            "support": 12229
+          },
+          {
+            "class_encoded": 1,
+            "class_name": "N1",
+            "f1": 0.31913262512320667,
+            "precision": 0.30462053104745973,
+            "recall": 0.33509659613615456,
+            "support": 4348
+          },
+          {
+            "class_encoded": 2,
+            "class_name": "N2",
+            "f1": 0.7882637628554144,
+            "precision": 0.8403063280935107,
+            "recall": 0.7422915331481877,
+            "support": 14043
+          },
+          {
+            "class_encoded": 3,
+            "class_name": "N3",
+            "f1": 0.7537018756169793,
+            "precision": 0.7593237195425162,
+            "recall": 0.7481626653601176,
+            "support": 2041
+          },
+          {
+            "class_encoded": 4,
+            "class_name": "REM",
+            "f1": 0.5091159948753327,
+            "precision": 0.48699095022624433,
+            "recall": 0.533347098905637,
+            "support": 4843
+          }
+        ],
+        "predict_probability_argmax_agreement": 1.0,
+        "predict_probability_argmax_mismatch_count": 0,
+        "primary_metric_name": "macro_f1",
+        "sample_count": 37504,
+        "schema_version": "1.0.0",
+        "weighted_f1": 0.7132409650125462
+      },
+      "model_name": "random_forest",
+      "outer_development_subjects": [
+        0,
+        1,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        2,
+        21,
+        23,
+        24,
+        25,
+        27,
+        28,
+        29,
+        3,
+        31,
+        32,
+        33,
+        36,
+        38,
+        4,
+        40,
+        41,
+        42,
+        43,
+        46,
+        47,
+        48,
+        49,
+        5,
+        50,
+        51,
+        52,
+        53,
+        54,
+        56,
+        58,
+        59,
+        6,
+        60,
+        61,
+        63,
+        64,
+        65,
+        66,
+        67,
+        7,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        77,
+        8,
+        80,
+        82
+      ],
+      "outer_fold": 5,
+      "selection_validation_summary": {
+        "mean_accuracy": 0.7316203831058644,
+        "mean_balanced_accuracy": 0.666257246689859,
+        "mean_cohen_kappa": 0.6327918418082713,
+        "mean_macro_f1": 0.6579960115416243,
+        "mean_multiclass_log_loss": 0.6958873296675501,
+        "mean_weighted_f1": 0.7302535871608323,
+        "std_accuracy": 0.008897556366896774,
+        "std_balanced_accuracy": 0.009475396350155865,
+        "std_cohen_kappa": 0.01044324566983676,
+        "std_macro_f1": 0.007537678982081282,
+        "std_multiclass_log_loss": 0.02107315025997679,
+        "std_weighted_f1": 0.015283038385027113
+      },
+      "test_row_count": 37504,
+      "test_subjects": [
+        20,
+        22,
+        26,
+        30,
+        34,
+        35,
+        37,
+        44,
+        45,
+        55,
+        57,
+        62,
+        76,
+        81,
+        9
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "scientific_reporting": {
+    "allowed": true,
+    "reason": "All inner selections were frozen before outer-test access, and every dataset row was evaluated exactly once.",
+    "scope": "full_dataset"
+  },
+  "source": {
+    "evaluation_protocol_path": "config/phase3_evaluation_protocol.json",
+    "evaluation_protocol_sha256": "efba77bc73bcc1c239f99a6c9d7ec06da152b7b327666f72abec972b91454269",
+    "model_input_path": "/kaggle/working/eeg-runtime-full/data/processed/sleep_edfx_model_input.csv",
+    "model_input_sha256": "2206393939becb513cb0bcdd7d3351010283476fd2b97ba7a075bf1da27547a1",
+    "model_registry_path": "config/phase3_model_registry.json",
+    "model_registry_sha256": "a011d08b9d9048232d8ef0862be2c4d1706650c737d3a9218102fdc3340ade27",
+    "model_schema_path": "/kaggle/working/eeg-runtime-full/data/metadata/sleep_edfx_model_feature_schema.json",
+    "model_schema_sha256": "3e17b1201d6d96926bef8b6461c91493b960b5f1aa567159505eb89fe40c7ab1",
+    "selection_artifact_path": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_inner_model_selection.json",
+    "selection_artifact_sha256": "4cac87636657640ec2e2a890428051f20f38d97d23c35592a990b0aec8b9b2be",
+    "split_manifest_path": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_split_manifest.json",
+    "split_manifest_sha256": "e50ec651f5326f72f1b10959f3256cd80343591cbd8c7bd471507d7d5d42eef9"
+  }
+}
