@@ -1,0 +1,224 @@
+{
+  "artifact_type": "phase3_full_scientific_summary",
+  "evaluation": {
+    "best_outer_fold": {
+      "macro_f1": 0.678754614218,
+      "outer_fold": 4
+    },
+    "evaluated_epoch_count": 195469,
+    "mean_outer_balanced_accuracy": 0.6675705737322,
+    "mean_outer_macro_f1": 0.658662178297,
+    "outer_fold_count": 5,
+    "pooled_accuracy": 0.7279875581294221,
+    "pooled_balanced_accuracy": 0.6704156757774,
+    "pooled_macro_f1": 0.661936216905,
+    "pooled_weighted_f1": 0.7309339359256807,
+    "std_outer_macro_f1": 0.011977251015159762,
+    "worst_outer_fold": {
+      "macro_f1": 0.642302859621,
+      "outer_fold": 5
+    }
+  },
+  "final_model": {
+    "candidate_id": "random_forest__candidate_002",
+    "feature_count": 28,
+    "model_name": "random_forest",
+    "top_features": [
+      {
+        "feature": "sigma_beta_ratio",
+        "importance": 0.1360210684797391,
+        "rank": 1
+      },
+      {
+        "feature": "zero_crossing_rate",
+        "importance": 0.0773432579380881,
+        "rank": 2
+      },
+      {
+        "feature": "delta_power_uv2",
+        "importance": 0.0757468108334809,
+        "rank": 3
+      },
+      {
+        "feature": "alpha_beta_ratio",
+        "importance": 0.0593781221591818,
+        "rank": 4
+      },
+      {
+        "feature": "std_uv",
+        "importance": 0.0565563951097664,
+        "rank": 5
+      },
+      {
+        "feature": "beta_power_uv2",
+        "importance": 0.045369140065039,
+        "rank": 6
+      },
+      {
+        "feature": "hjorth_mobility",
+        "importance": 0.0386458593786612,
+        "rank": 7
+      },
+      {
+        "feature": "line_length_uv",
+        "importance": 0.0377334948876443,
+        "rank": 8
+      },
+      {
+        "feature": "theta_alpha_ratio",
+        "importance": 0.03217519598938,
+        "rank": 9
+      },
+      {
+        "feature": "spectral_centroid_hz",
+        "importance": 0.0314942574777061,
+        "rank": 10
+      },
+      {
+        "feature": "kurtosis_excess",
+        "importance": 0.031370468359609,
+        "rank": 11
+      },
+      {
+        "feature": "relative_theta_power",
+        "importance": 0.030079061750842,
+        "rank": 12
+      },
+      {
+        "feature": "spectral_entropy",
+        "importance": 0.0286828519901132,
+        "rank": 13
+      },
+      {
+        "feature": "peak_to_peak_uv",
+        "importance": 0.0277983961321897,
+        "rank": 14
+      },
+      {
+        "feature": "sigma_power_uv2",
+        "importance": 0.0274935242771356,
+        "rank": 15
+      }
+    ]
+  },
+  "interpretation_constraints": [
+    "Results are based on subject-grouped nested evaluation.",
+    "Feature importance is model-specific and does not establish causality.",
+    "The system is an educational data science artifact, not a clinical diagnostic system."
+  ],
+  "largest_confusions": [
+    {
+      "count": 5674,
+      "predicted_class": "REM",
+      "rank": 1,
+      "true_class": "N2",
+      "true_class_error_rate": 0.08207487126077649
+    },
+    {
+      "count": 5585,
+      "predicted_class": "REM",
+      "rank": 2,
+      "true_class": "N1",
+      "true_class_error_rate": 0.2595019050274138
+    },
+    {
+      "count": 5512,
+      "predicted_class": "N1",
+      "rank": 3,
+      "true_class": "Wake",
+      "true_class_error_rate": 0.0835898757980619
+    },
+    {
+      "count": 4966,
+      "predicted_class": "N2",
+      "rank": 4,
+      "true_class": "N1",
+      "true_class_error_rate": 0.23074063748722237
+    },
+    {
+      "count": 4522,
+      "predicted_class": "N1",
+      "rank": 5,
+      "true_class": "N2",
+      "true_class_error_rate": 0.06541109761036858
+    },
+    {
+      "count": 4424,
+      "predicted_class": "N1",
+      "rank": 6,
+      "true_class": "REM",
+      "true_class_error_rate": 0.17124056512483066
+    },
+    {
+      "count": 3993,
+      "predicted_class": "Wake",
+      "rank": 7,
+      "true_class": "N1",
+      "true_class_error_rate": 0.18553108447170338
+    },
+    {
+      "count": 3734,
+      "predicted_class": "REM",
+      "rank": 8,
+      "true_class": "Wake",
+      "true_class_error_rate": 0.05662637812590043
+    },
+    {
+      "count": 3144,
+      "predicted_class": "N2",
+      "rank": 9,
+      "true_class": "REM",
+      "true_class_error_rate": 0.12169537449196827
+    },
+    {
+      "count": 2818,
+      "predicted_class": "Wake",
+      "rank": 10,
+      "true_class": "REM",
+      "true_class_error_rate": 0.10907683375266111
+    }
+  ],
+  "per_class": [
+    {
+      "class_encoded": 0,
+      "class_name": "Wake",
+      "f1": 0.847641026425,
+      "precision": 0.854299841346,
+      "recall": 0.841085212538,
+      "support": 65941
+    },
+    {
+      "class_encoded": 1,
+      "class_name": "N1",
+      "f1": 0.320768800149,
+      "precision": 0.32206088993,
+      "recall": 0.319487036521,
+      "support": 21522
+    },
+    {
+      "class_encoded": 2,
+      "class_name": "N2",
+      "f1": 0.805336278036,
+      "precision": 0.831633124788,
+      "recall": 0.780651507261,
+      "support": 69132
+    },
+    {
+      "class_encoded": 3,
+      "class_name": "N3",
+      "f1": 0.7901957876,
+      "precision": 0.764950822026,
+      "recall": 0.817163892937,
+      "support": 13039
+    },
+    {
+      "class_encoded": 4,
+      "class_name": "REM",
+      "f1": 0.545739192315,
+      "precision": 0.50495473251,
+      "recall": 0.59369072963,
+      "support": 25835
+    }
+  ],
+  "schema_version": "1.0.0"
+}
