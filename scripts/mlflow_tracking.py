@@ -80,7 +80,7 @@ class ImportInputs:
     scope: str
     selection_path: Path
     outer_evaluation_path: Path
-    model_manifest_path: Path
+    model_manifest_path: Path | None
     final_refit_manifest_path: Path
 
 
@@ -495,7 +495,7 @@ def validate_scope_contracts(
     scope: str,
     selection: Mapping[str, Any],
     outer_evaluation: Mapping[str, Any],
-    model_manifest: Mapping[str, Any],
+    model_manifest: Mapping[str, Any] | None,
     final_refit_manifest: Mapping[str, Any],
 ) -> None:
     if scope not in SUPPORTED_SCOPE_NAMES:
@@ -519,8 +519,15 @@ def validate_scope_contracts(
 
     if outer_evaluation.get("complete_outer_evaluation") is not True:
         raise ValueError("Outer evaluation must be complete before MLflow import.")
-    if model_manifest.get("complete_model_set") is not True:
-        raise ValueError("Outer model manifest must contain a complete model set.")
+    if model_manifest is None:
+        if scope == "local_validation":
+            raise ValueError(
+                "Local validation import requires an outer model manifest."
+            )
+    elif model_manifest.get("complete_model_set") is not True:
+        raise ValueError(
+            "Outer model manifest must contain a complete model set."
+        )
 
     selection_allowed = scientific_reporting_allowed(selection)
     outer_allowed = scientific_reporting_allowed(outer_evaluation)
@@ -796,18 +803,28 @@ def _log_common_metadata(
     config_path: Path,
     project_root: Path,
 ) -> None:
+    metadata_paths = [
+        config_path,
+        inputs.selection_path,
+        inputs.outer_evaluation_path,
+        inputs.final_refit_manifest_path,
+        project_root / "config" / "phase3_evaluation_protocol.json",
+        project_root / "config" / "phase3_model_registry.json",
+        project_root
+        / "data"
+        / "metadata"
+        / "sleep_edfx_model_feature_schema.json",
+    ]
+
+    if inputs.model_manifest_path is not None:
+        metadata_paths.insert(
+            3,
+            inputs.model_manifest_path,
+        )
+
     _log_artifact_set(
         context.mlflow,
-        [
-            config_path,
-            inputs.selection_path,
-            inputs.outer_evaluation_path,
-            inputs.model_manifest_path,
-            inputs.final_refit_manifest_path,
-            project_root / "config" / "phase3_evaluation_protocol.json",
-            project_root / "config" / "phase3_model_registry.json",
-            project_root / "data" / "metadata" / "sleep_edfx_model_feature_schema.json",
-        ],
+        metadata_paths,
         "metadata",
     )
 
@@ -825,7 +842,11 @@ def import_phase3_artifacts(
 ) -> dict[str, Any]:
     selection = load_json(inputs.selection_path)
     outer_evaluation = load_json(inputs.outer_evaluation_path)
-    model_manifest = load_json(inputs.model_manifest_path)
+    model_manifest = (
+        load_json(inputs.model_manifest_path)
+        if inputs.model_manifest_path is not None
+        else None
+    )
     final_refit_manifest = load_json(inputs.final_refit_manifest_path)
 
     validate_scope_contracts(
@@ -841,16 +862,26 @@ def import_phase3_artifacts(
         "outer_evaluation": validate_source_hashes(
             outer_evaluation, project_root=project_root
         ),
-        "model_manifest": validate_source_hashes(
-            model_manifest, project_root=project_root
+        "model_manifest": (
+            validate_source_hashes(
+                model_manifest,
+                project_root=project_root,
+            )
+            if model_manifest is not None
+            else []
         ),
         "final_refit_manifest": validate_source_hashes(
             final_refit_manifest, project_root=project_root
         ),
     }
     model_validation = {
-        "outer_models": validate_model_manifest(
-            model_manifest, project_root=project_root
+        "outer_models": (
+            validate_model_manifest(
+                model_manifest,
+                project_root=project_root,
+            )
+            if model_manifest is not None
+            else []
         ),
         "final_refit": validate_model_manifest(
             final_refit_manifest, project_root=project_root
@@ -865,13 +896,19 @@ def import_phase3_artifacts(
     fingerprint_scope = (
         f"{inputs.scope}:models={str(bool(log_models)).lower()}"
     )
+    fingerprint_paths = [
+        inputs.selection_path,
+        inputs.outer_evaluation_path,
+        inputs.final_refit_manifest_path,
+    ]
+
+    if inputs.model_manifest_path is not None:
+        fingerprint_paths.append(
+            inputs.model_manifest_path
+        )
+
     fingerprint = compute_import_fingerprint(
-        [
-            inputs.selection_path,
-            inputs.outer_evaluation_path,
-            inputs.model_manifest_path,
-            inputs.final_refit_manifest_path,
-        ],
+        fingerprint_paths,
         fingerprint_scope,
     )
     if not force:
@@ -932,7 +969,13 @@ def import_phase3_artifacts(
                 "outer_evaluation_sha256": sha256_file(
                     inputs.outer_evaluation_path
                 ),
-                "model_manifest_sha256": sha256_file(inputs.model_manifest_path),
+                "model_manifest_sha256": (
+                    sha256_file(
+                        inputs.model_manifest_path
+                    )
+                    if inputs.model_manifest_path is not None
+                    else "not_provided"
+                ),
                 "final_refit_manifest_sha256": sha256_file(
                     inputs.final_refit_manifest_path
                 ),
@@ -949,7 +992,78 @@ def import_phase3_artifacts(
             project_root=project_root,
         )
 
-        for model_record in model_manifest["models"]:
+        if model_manifest is None:
+            for outer_fold, outer_result in sorted(
+                outer_index.items()
+            ):
+                run_tags = _run_tags(
+                    context,
+                    scope=inputs.scope,
+                    role="outer_fold_evaluation",
+                    scientific_allowed=scientific_allowed,
+                    git_commit=resolved_commit,
+                    additional={
+                        "eeg.outer_fold": outer_fold,
+                        "eeg.deployment_ready": False,
+                        "eeg.model_artifact_available": False,
+                    },
+                )
+
+                with context.mlflow.start_run(
+                    experiment_id=context.experiment_id,
+                    run_name=(
+                        f"{inputs.scope}__"
+                        f"outer_fold_{outer_fold:02d}__evaluation"
+                    ),
+                    nested=True,
+                    tags=run_tags,
+                ) as child_run:
+                    context.mlflow.log_params(
+                        {
+                            "outer_fold": str(outer_fold),
+                            "model_artifact_available": "false",
+                        }
+                    )
+
+                    metrics = outer_result.get("metrics")
+
+                    if isinstance(metrics, Mapping):
+                        context.mlflow.log_metrics(
+                            flatten_metrics(
+                                metrics,
+                                prefix="outer_test",
+                            )
+                        )
+
+                    selection_summary = outer_result.get(
+                        "selection_validation_summary"
+                    )
+
+                    if isinstance(
+                        selection_summary,
+                        Mapping,
+                    ):
+                        context.mlflow.log_metrics(
+                            flatten_metrics(
+                                selection_summary,
+                                prefix="inner_validation",
+                            )
+                        )
+
+                    child_runs.append(
+                        {
+                            "role": "outer_fold_evaluation",
+                            "outer_fold": outer_fold,
+                            "run_id": child_run.info.run_id,
+                            "model_artifact_available": False,
+                        }
+                    )
+
+        for model_record in (
+            model_manifest["models"]
+            if model_manifest is not None
+            else []
+        ):
             outer_fold = int(model_record["outer_fold"])
             outer_result = outer_index.get(outer_fold)
             if outer_result is None:
@@ -1320,7 +1434,17 @@ def build_argument_parser() -> argparse.ArgumentParser:
     import_phase3_parser.add_argument("--scope", choices=sorted(SUPPORTED_SCOPE_NAMES), required=True)
     import_phase3_parser.add_argument("--selection", type=Path, required=True)
     import_phase3_parser.add_argument("--outer-evaluation", type=Path, required=True)
-    import_phase3_parser.add_argument("--model-manifest", type=Path, required=True)
+    import_phase3_parser.add_argument(
+        "--model-manifest",
+        type=Path,
+        required=False,
+        default=None,
+        help=(
+            "Optional outer-fold model manifest. "
+            "Full-dataset imports may omit it when only "
+            "outer evaluation metrics were retained."
+        ),
+    )
     import_phase3_parser.add_argument("--final-refit-manifest", type=Path, required=True)
     import_phase3_parser.add_argument("--git-commit", default=None)
     import_phase3_parser.add_argument("--force", action="store_true")
@@ -1387,7 +1511,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             scope=args.scope,
             selection_path=_resolved_input_path(args.selection),
             outer_evaluation_path=_resolved_input_path(args.outer_evaluation),
-            model_manifest_path=_resolved_input_path(args.model_manifest),
+            model_manifest_path=(
+                _resolved_input_path(
+                    args.model_manifest
+                )
+                if args.model_manifest is not None
+                else None
+            ),
             final_refit_manifest_path=_resolved_input_path(args.final_refit_manifest),
         )
 
