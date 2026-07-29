@@ -1,0 +1,41 @@
+{
+  "artifact_type": "phase3_full_final_refit_manifest",
+  "candidate_space_complete": true,
+  "created_at_utc": "2026-07-29T13:00:32.920347+00:00",
+  "deployment": {
+    "deployment_ready": true,
+    "inference_ready": true
+  },
+  "model_count": 1,
+  "models": [
+    {
+      "candidate_id": "random_forest__candidate_002",
+      "candidate_parameters": {
+        "classifier__max_depth": null,
+        "classifier__max_features": "sqrt",
+        "classifier__min_samples_leaf": 4
+      },
+      "deployment_ready": true,
+      "feature_count": 28,
+      "inference_ready": true,
+      "model_file_path": "/kaggle/working/eeg-runtime-full/artifacts/models/phase3_full_final_refit/phase3_full_final_refit.joblib",
+      "model_file_sha256": "354484d39f5313981c1d164e30738adfafe0d18d33ee5da9854584a16337f820",
+      "model_file_size_bytes": 326198472,
+      "model_name": "random_forest",
+      "reload_prediction_match": true,
+      "reload_probability_match": true,
+      "scientific_reporting_allowed": true,
+      "selection_fold_count": 15,
+      "selection_mean_macro_f1": 0.652188278113943,
+      "selection_std_macro_f1": 0.012384837938746295,
+      "training_row_count": 195469,
+      "training_subject_count": 78,
+      "verification_row_count": 256
+    }
+  ],
+  "outer_test_metrics_used_for_selection": false,
+  "outer_test_predictions_used_for_selection": false,
+  "schema_version": "1.0.0",
+  "scientific_reporting_allowed": true,
+  "scope": "full_dataset"
+}

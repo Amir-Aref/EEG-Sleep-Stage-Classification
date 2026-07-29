@@ -1,0 +1,145 @@
+{
+  "artifact_type": "phase3_full_artifact_provenance",
+  "checkpoint_archive": {
+    "path": "eeg_phase3_prediction_store_checkpoint.tar.gz",
+    "sha256": "3237b03411720c75c7ccf6bd21a873386a8d3d798d8eeaefee79975c216c40ba",
+    "size_bytes": 549605227
+  },
+  "committed_artifact_count": 19,
+  "committed_artifacts": [
+    {
+      "path": "data/metadata/phase3_full_final_refit_manifest.csv",
+      "sha256": "c9068a5d799273dd1c491c7224d8dd5a5142a2d332bbaf56ef9e80125e7a5c00",
+      "size_bytes": 771
+    },
+    {
+      "path": "data/metadata/phase3_full_final_refit_manifest.json",
+      "sha256": "0d03f5f63f14a8e0f6cbb73bcd8c87198369c9657e8a51614b7b0b7a959dc99e",
+      "size_bytes": 1470
+    },
+    {
+      "path": "data/metadata/phase3_full_final_refit_selection.csv",
+      "sha256": "d24d71d75feabccf657213e429c9c11d4fd2dcb702cf7ed6adc5a9e9faeaa5ab",
+      "size_bytes": 6814
+    },
+    {
+      "path": "data/metadata/phase3_full_final_refit_selection.json",
+      "sha256": "2e246105f78be879710374cb5e74c353322811efd8e304f906aefb21494c18f9",
+      "size_bytes": 754577
+    },
+    {
+      "path": "data/metadata/phase3_full_inner_model_selection.json",
+      "sha256": "4cac87636657640ec2e2a890428051f20f38d97d23c35592a990b0aec8b9b2be",
+      "size_bytes": 2143747
+    },
+    {
+      "path": "data/metadata/phase3_full_inner_search_progress.json",
+      "sha256": "43b7051b633cae594ff7308be97918fd0343a8009303c8cfa3b2f53aa675051b",
+      "size_bytes": 1194823
+    },
+    {
+      "path": "data/metadata/phase3_full_inner_search_results.csv",
+      "sha256": "f0eb23dc5fa05aa1976f055d9dc5626f67934bba32e01f4c924029afc884c077",
+      "size_bytes": 82228
+    },
+    {
+      "path": "data/metadata/phase3_full_inner_search_results.json",
+      "sha256": "5344bbc0dda8054ac9760be5f02fcb393679eaee92d952b0fb16ec27a9f72f3d",
+      "size_bytes": 1984839
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_confusion_matrix_normalized.csv",
+      "sha256": "6d5d5943d630beccb5e6b29465f21008756258f65c357e471c71790159a9a8a2",
+      "size_bytes": 439
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_confusion_matrix_raw.csv",
+      "sha256": "e51565d36f05dce0bfb3cca5589f378f18cb694619c75c182b9c39a16ba228ac",
+      "size_bytes": 167
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_evaluation.json",
+      "sha256": "488790ba53d044008fda22efbf6294d53dbdc1a0a23f03938b2a3a3e10edf6fb",
+      "size_bytes": 39639
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_fold_metrics.csv",
+      "sha256": "239aed1967f7105b99209955c606b53bfbaa3be8a491c2b834fe2d5c81e03dd5",
+      "size_bytes": 3018
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_per_class_metrics.csv",
+      "sha256": "e1044ab1e5bc74f5c53ad7a4e6a05cc648a0f0754168f53e6abe2e3749c8bb1c",
+      "size_bytes": 331
+    },
+    {
+      "path": "data/metadata/phase3_full_split_manifest.csv",
+      "sha256": "56c57a7a488a377e0034bd86d511a7d74a787816e9c86b06d90059a3e75ff433",
+      "size_bytes": 4194
+    },
+    {
+      "path": "data/metadata/phase3_full_split_manifest.json",
+      "sha256": "e50ec651f5326f72f1b10959f3256cd80343591cbd8c7bd471507d7d5d42eef9",
+      "size_bytes": 63169
+    },
+    {
+      "path": "reports/phase3_full_final_refit_report.json",
+      "sha256": "0c1c3ac2ab9a6c40ca81af9cac734df557b5967dc5ed4bc5efabbe08ba1066c9",
+      "size_bytes": 809
+    },
+    {
+      "path": "reports/phase3_full_mlflow_import_summary.json",
+      "sha256": "963cb279101c77ffb587d03683f802a88b3597a9d9c4ec5a9e80c9acc1af5a0c",
+      "size_bytes": 722
+    },
+    {
+      "path": "reports/phase3_full_outer_evaluation_report.json",
+      "sha256": "f628f0a68e256f7e4b983c511664c77469448f14f72cdaf501f407b1b6c018a3",
+      "size_bytes": 6188
+    },
+    {
+      "path": "reports/phase3_full_prediction_store_report.json",
+      "sha256": "d5197cd13c0683f29ba98f21499fd76d66808b1b32dafea0ac0789b0429cd912",
+      "size_bytes": 1786
+    }
+  ],
+  "external_artifact_count": 5,
+  "external_artifacts": [
+    {
+      "path": "artifacts/models/phase3_full_final_refit/phase3_full_final_refit.joblib",
+      "sha256": "354484d39f5313981c1d164e30738adfafe0d18d33ee5da9854584a16337f820",
+      "size_bytes": 326198472
+    },
+    {
+      "path": "data/metadata/phase3_full_outer_test_predictions.csv",
+      "sha256": "d2ec163df0dea0ed3c2a5a547b6952690cea10b5fe3fcc2d277e2e2b42b8a62f",
+      "size_bytes": 50574928
+    },
+    {
+      "path": "data/predictions/phase3_full_final_refit_predictions.csv",
+      "sha256": "fac7b280cf1c0c7a9967b7c7a5ad85d2b5361d9352ef01ea0e9388885815de07",
+      "size_bytes": 34354409
+    },
+    {
+      "path": "data/processed/sleep_edfx_model_input.csv",
+      "sha256": "2206393939becb513cb0bcdd7d3351010283476fd2b97ba7a075bf1da27547a1",
+      "size_bytes": 102049219
+    },
+    {
+      "path": "sqlite-db/phase3_full_predictions.sqlite3",
+      "sha256": "41a328c48ed790e9920eeb55c998f6449d65d909738760d7c0de1eca741c7e74",
+      "size_bytes": 81268736
+    }
+  ],
+  "policy": {
+    "large_binary_model_is_external": true,
+    "original_artifact_bytes_preserved": true,
+    "prediction_database_is_external": true,
+    "processed_model_input_is_external": true,
+    "repository_contains_summary_artifacts": true,
+    "row_level_predictions_are_external": true
+  },
+  "repository_commit_before_integration": "c111453efdb69034a2f3c29f08eb1c82f6592e7b",
+  "schema_version": "1.0.0",
+  "source_runtime_name": "eeg-runtime-full"
+}

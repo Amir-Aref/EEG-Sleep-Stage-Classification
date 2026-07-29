@@ -1,0 +1,245 @@
+{
+  "artifact_type": "phase3_full_outer_evaluation_report",
+  "created_at_utc": "2026-07-29T09:36:42.485294+00:00",
+  "dataset": {
+    "class_mapping": {
+      "N1": 1,
+      "N2": 2,
+      "N3": 3,
+      "REM": 4,
+      "Wake": 0
+    },
+    "feature_count": 28,
+    "row_count": 195469,
+    "subject_count": 78
+  },
+  "evaluation": {
+    "each_epoch_tested_once": true,
+    "elapsed_seconds": 1505.940100885,
+    "evaluated_outer_folds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "hyperparameter_search_performed": false,
+    "outer_fold_count": 5,
+    "prediction_row_count": 195469,
+    "selection_frozen": true
+  },
+  "fold_metric_summary": {
+    "accuracy": {
+      "maximum": 0.7557267697399038,
+      "mean": 0.7284056675591557,
+      "minimum": 0.7023878053834995,
+      "std": 0.019943465695073815
+    },
+    "balanced_accuracy": {
+      "maximum": 0.6819102317106046,
+      "mean": 0.6675705737321458,
+      "minimum": 0.6453505984172726,
+      "std": 0.012689026847065507
+    },
+    "cohen_kappa": {
+      "maximum": 0.6702062136208976,
+      "mean": 0.6283588592454833,
+      "minimum": 0.5962642739948395,
+      "std": 0.027552237536865296
+    },
+    "macro_f1": {
+      "maximum": 0.6787546142180076,
+      "mean": 0.6586621782971285,
+      "minimum": 0.6423028596212575,
+      "std": 0.011977251015104641
+    },
+    "multiclass_log_loss": {
+      "maximum": 0.7359945023810822,
+      "mean": 0.6981679075532912,
+      "minimum": 0.6534663120545204,
+      "std": 0.031930878887180124
+    },
+    "weighted_f1": {
+      "maximum": 0.7536035035148259,
+      "mean": 0.7306675520932029,
+      "minimum": 0.7132409650125462,
+      "std": 0.015818933093570374
+    }
+  },
+  "outputs": {
+    "confusion_normalized_csv": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_confusion_matrix_normalized.csv",
+    "confusion_raw_csv": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_confusion_matrix_raw.csv",
+    "evaluation_json": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_evaluation.json",
+    "fold_summary_csv": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_fold_metrics.csv",
+    "per_class_csv": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_per_class_metrics.csv",
+    "predictions_csv": "/kaggle/working/eeg-runtime-full/data/metadata/phase3_full_outer_test_predictions.csv"
+  },
+  "pooled_test_metrics": {
+    "accuracy": 0.7279875581294221,
+    "balanced_accuracy": 0.6704156757775286,
+    "class_count": 5,
+    "class_mapping": {
+      "N1": 1,
+      "N2": 2,
+      "N3": 3,
+      "REM": 4,
+      "Wake": 0
+    },
+    "class_order": [
+      "Wake",
+      "N1",
+      "N2",
+      "N3",
+      "REM"
+    ],
+    "cohen_kappa": 0.6290179887671079,
+    "confusion_matrix": {
+      "encoded_labels": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": [
+        "Wake",
+        "N1",
+        "N2",
+        "N3",
+        "REM"
+      ],
+      "normalized_by_true_class": [
+        [
+          0.8410852125384813,
+          0.0835898757980619,
+          0.014391653144477639,
+          0.0043068803930786615,
+          0.05662637812590043
+        ],
+        [
+          0.18553108447170338,
+          0.31948703652076943,
+          0.23074063748722237,
+          0.004739336492890996,
+          0.2595019050274138
+        ],
+        [
+          0.0316929931146213,
+          0.06541109761036858,
+          0.7806515072614708,
+          0.04016953075276283,
+          0.08207487126077649
+        ],
+        [
+          0.0350487000536851,
+          0.0012270879668686248,
+          0.14318582713398267,
+          0.8171638929365749,
+          0.0033744919088887185
+        ],
+        [
+          0.10907683375266111,
+          0.17124056512483066,
+          0.12169537449196827,
+          0.004296497000193536,
+          0.5936907296303464
+        ]
+      ],
+      "raw": [
+        [
+          55462,
+          5512,
+          949,
+          284,
+          3734
+        ],
+        [
+          3993,
+          6876,
+          4966,
+          102,
+          5585
+        ],
+        [
+          2191,
+          4522,
+          53968,
+          2777,
+          5674
+        ],
+        [
+          457,
+          16,
+          1867,
+          10655,
+          44
+        ],
+        [
+          2818,
+          4424,
+          3144,
+          111,
+          15338
+        ]
+      ]
+    },
+    "macro_f1": 0.6619362169048647,
+    "mean_confidence_when_correct": 0.7695572165070238,
+    "mean_confidence_when_incorrect": 0.5357495589812409,
+    "mean_normalized_entropy": 0.4588385069142581,
+    "mean_prediction_confidence": 0.7059586246553958,
+    "mean_prediction_margin": 0.529691294195864,
+    "multiclass_log_loss": 0.6977586236395957,
+    "per_class": [
+      {
+        "class_encoded": 0,
+        "class_name": "Wake",
+        "f1": 0.8476410264247833,
+        "precision": 0.8542998413456354,
+        "recall": 0.8410852125384813,
+        "support": 65941
+      },
+      {
+        "class_encoded": 1,
+        "class_name": "N1",
+        "f1": 0.3207688001492816,
+        "precision": 0.3220608899297424,
+        "recall": 0.31948703652076943,
+        "support": 21522
+      },
+      {
+        "class_encoded": 2,
+        "class_name": "N2",
+        "f1": 0.805336278035605,
+        "precision": 0.831633124788116,
+        "recall": 0.7806515072614708,
+        "support": 69132
+      },
+      {
+        "class_encoded": 3,
+        "class_name": "N3",
+        "f1": 0.7901957876001187,
+        "precision": 0.764950822025989,
+        "recall": 0.8171638929365749,
+        "support": 13039
+      },
+      {
+        "class_encoded": 4,
+        "class_name": "REM",
+        "f1": 0.5457391923145348,
+        "precision": 0.5049547325102881,
+        "recall": 0.5936907296303464,
+        "support": 25835
+      }
+    ],
+    "predict_probability_argmax_agreement": 1.0,
+    "predict_probability_argmax_mismatch_count": 0,
+    "primary_metric_name": "macro_f1",
+    "sample_count": 195469,
+    "schema_version": "1.0.0",
+    "weighted_f1": 0.7309339359254452
+  },
+  "schema_version": "1.0",
+  "scientific_reporting_allowed": true,
+  "status": "PASS"
+}

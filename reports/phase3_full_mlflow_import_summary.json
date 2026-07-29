@@ -1,0 +1,24 @@
+{
+  "artifact_type": "phase3_full_mlflow_import_summary",
+  "child_run_counts": {
+    "final_refit_model": 1,
+    "outer_fold_evaluation": 5
+  },
+  "experiment_name": "EEG Sleep Stage Classification",
+  "local_machine_paths_omitted": true,
+  "models_logged": true,
+  "parent_run_id": "3725464eddde497fae12cc7d3b29326e",
+  "registered_model_versions": [
+    {
+      "alias": "champion",
+      "name": "EEG_Sleep_Stage_Classifier",
+      "version": "1"
+    }
+  ],
+  "repository_commit_at_import": "c111453efdb69034a2f3c29f08eb1c82f6592e7b",
+  "schema_version": "1.0.0",
+  "scientific_reporting_allowed": true,
+  "scope": "full_dataset",
+  "status": "imported",
+  "tracking_backend": "local_sqlite"
+}

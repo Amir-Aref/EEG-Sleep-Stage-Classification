@@ -1,0 +1,20 @@
+{
+  "artifact_type": "phase3_full_final_refit_report",
+  "created_at_utc": "2026-07-29T13:00:32.922577+00:00",
+  "deployment_ready": true,
+  "elapsed_seconds": 161.53567522599997,
+  "model_name": "random_forest",
+  "model_path": "/kaggle/working/eeg-runtime-full/artifacts/models/phase3_full_final_refit/phase3_full_final_refit.joblib",
+  "model_sha256": "354484d39f5313981c1d164e30738adfafe0d18d33ee5da9854584a16337f820",
+  "model_size_bytes": 326198472,
+  "outer_test_metrics_used_for_selection": false,
+  "prediction_roundtrip": true,
+  "probability_roundtrip": true,
+  "schema_version": "1.0",
+  "scientific_reporting_allowed": true,
+  "selected_candidate": "random_forest__candidate_002",
+  "selection_fold_count": 15,
+  "status": "PASS",
+  "training_row_count": 195469,
+  "training_subject_count": 78
+}
