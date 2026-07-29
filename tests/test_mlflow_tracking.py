@@ -202,6 +202,91 @@ class MlflowTrackingUnitTests(unittest.TestCase):
                 final_refit_manifest=final_manifest,
             )
 
+
+    def test_full_scope_allows_missing_outer_model_manifest(
+        self,
+    ) -> None:
+        selection = {
+            "candidate_space_complete": True,
+            "selection_result": {
+                "test_metrics_included": False,
+                "test_predictions_included": False,
+                "test_feature_matrix_loaded": False,
+            },
+        }
+        outer = {
+            "complete_outer_evaluation": True,
+            "scientific_reporting": {
+                "allowed": True,
+            },
+        }
+        final_manifest = {
+            "scientific_reporting_allowed": True,
+            "deployment": {
+                "deployment_ready": True,
+            },
+        }
+
+        tracking.validate_scope_contracts(
+            scope="full_dataset",
+            selection=selection,
+            outer_evaluation=outer,
+            model_manifest=None,
+            final_refit_manifest=final_manifest,
+        )
+
+    def test_local_scope_requires_outer_model_manifest(
+        self,
+    ) -> None:
+        selection = {
+            "candidate_space_complete": True,
+            "selection_result": {
+                "test_metrics_included": False,
+                "test_predictions_included": False,
+                "test_feature_matrix_loaded": False,
+            },
+        }
+        outer = {
+            "complete_outer_evaluation": True,
+            "scientific_reporting": {
+                "allowed": False,
+            },
+        }
+        final_manifest = {
+            "scientific_reporting_allowed": False,
+        }
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "requires an outer model manifest",
+        ):
+            tracking.validate_scope_contracts(
+                scope="local_validation",
+                selection=selection,
+                outer_evaluation=outer,
+                model_manifest=None,
+                final_refit_manifest=final_manifest,
+            )
+
+    def test_full_import_parser_makes_outer_manifest_optional(
+        self,
+    ) -> None:
+        args = tracking.build_argument_parser().parse_args(
+            [
+                "import-phase3",
+                "--scope",
+                "full_dataset",
+                "--selection",
+                "selection.json",
+                "--outer-evaluation",
+                "outer.json",
+                "--final-refit-manifest",
+                "final.json",
+            ]
+        )
+
+        self.assertIsNone(args.model_manifest)
+
     def test_runtime_mismatch_is_rejected_by_default(self) -> None:
         metadata = {"runtime": {"scikit_learn": "0.0.0"}}
         with self.assertRaisesRegex(RuntimeError, "saved model runtime"):
@@ -302,6 +387,164 @@ class MlflowTrackingUnitTests(unittest.TestCase):
             self.assertGreaterEqual(fake_mlflow.counter, 6)
             self.assertTrue(fake_mlflow.logged_metrics)
             self.assertTrue(fake_mlflow.logged_artifacts)
+
+
+    def test_full_metrics_only_import_builds_evaluation_runs(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+
+            selection_path = root / "selection.json"
+            outer_path = root / "outer.json"
+            final_path = root / "final.json"
+            final_model_path = root / "final.joblib"
+
+            final_model_path.write_bytes(b"model")
+
+            selection_path.write_text(
+                json.dumps(
+                    {
+                        "candidate_space_complete": True,
+                        "selection_result": {
+                            "test_metrics_included": False,
+                            "test_predictions_included": False,
+                            "test_feature_matrix_loaded": False,
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            outer_path.write_text(
+                json.dumps(
+                    {
+                        "complete_outer_evaluation": True,
+                        "scientific_reporting": {
+                            "allowed": True,
+                        },
+                        "outer_results": [
+                            {
+                                "outer_fold": 1,
+                                "metrics": {
+                                    "macro_f1": 0.61,
+                                },
+                            },
+                            {
+                                "outer_fold": 2,
+                                "metrics": {
+                                    "macro_f1": 0.62,
+                                },
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            final_path.write_text(
+                json.dumps(
+                    {
+                        "scientific_reporting_allowed": True,
+                        "deployment": {
+                            "deployment_ready": True,
+                        },
+                        "model_count": 1,
+                        "models": [
+                            {
+                                "model_file_path": str(
+                                    final_model_path
+                                ),
+                                "model_name": "random_forest",
+                                "candidate_id": "candidate_002",
+                                "candidate_parameters": {},
+                                "feature_count": 28,
+                                "training_row_count": 100,
+                                "model_file_sha256": (
+                                    tracking.sha256_file(
+                                        final_model_path
+                                    )
+                                ),
+                                "deployment_ready": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            config = tracking.load_tracking_config()
+            fake_mlflow = _FakeMlflow()
+
+            fake_context = tracking.TrackingContext(
+                mlflow=fake_mlflow,
+                client=_FakeClient(),
+                experiment_id="1",
+                config=config,
+                paths=tracking.TrackingPaths(
+                    root=root / "mlflow",
+                    backend_database=(
+                        root / "mlflow" / "mlflow.db"
+                    ),
+                    artifact_root=(
+                        root / "mlflow" / "artifacts"
+                    ),
+                    summary_path=root / "summary.json",
+                    tracking_uri="sqlite:///fake",
+                    artifact_uri=(
+                        root / "mlflow" / "artifacts"
+                    ).as_uri(),
+                ),
+            )
+
+            inputs = tracking.ImportInputs(
+                scope="full_dataset",
+                selection_path=selection_path,
+                outer_evaluation_path=outer_path,
+                model_manifest_path=None,
+                final_refit_manifest_path=final_path,
+            )
+
+            with (
+                patch.object(
+                    tracking,
+                    "initialize_tracking",
+                    return_value=fake_context,
+                ),
+                patch.object(
+                    tracking,
+                    "validate_source_hashes",
+                    return_value=[],
+                ),
+                patch.object(
+                    tracking,
+                    "validate_model_manifest",
+                    return_value=[],
+                ),
+            ):
+                summary = tracking.import_phase3_artifacts(
+                    inputs=inputs,
+                    git_commit="11c9ff4",
+                    log_models=False,
+                )
+
+            self.assertEqual(
+                [
+                    run["role"]
+                    for run in summary["child_runs"]
+                ],
+                [
+                    "outer_fold_evaluation",
+                    "outer_fold_evaluation",
+                    "final_refit_model",
+                ],
+            )
+            self.assertEqual(
+                summary["model_validation"]["outer_models"],
+                [],
+            )
+            self.assertFalse(summary["models_logged"])
+            self.assertEqual(fake_mlflow.counter, 4)
 
     def test_import_fingerprint_is_order_independent(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
