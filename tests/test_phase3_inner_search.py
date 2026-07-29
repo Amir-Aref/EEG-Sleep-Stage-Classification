@@ -229,6 +229,108 @@ def synthetic_manifest() -> dict:
     }
 
 
+def synthetic_grouped_manifest() -> dict:
+    subjects = list(range(8))
+    splits = []
+
+    outer_partitions = [
+        (
+            [0, 1, 2, 3],
+            [4, 5, 6, 7],
+        ),
+        (
+            [4, 5, 6, 7],
+            [0, 1, 2, 3],
+        ),
+    ]
+
+    for (
+        outer_fold,
+        (
+            test_subjects,
+            development_subjects,
+        ),
+    ) in enumerate(
+        outer_partitions,
+        start=1,
+    ):
+        validation_partitions = [
+            development_subjects[:2],
+            development_subjects[2:],
+        ]
+
+        for (
+            inner_fold,
+            validation_subjects,
+        ) in enumerate(
+            validation_partitions,
+            start=1,
+        ):
+            validation_set = set(
+                validation_subjects
+            )
+
+            train_subjects = [
+                subject
+                for subject
+                in development_subjects
+                if subject
+                not in validation_set
+            ]
+
+            splits.append(
+                {
+                    "split_id": (
+                        f"outer_{outer_fold:02d}_"
+                        f"inner_{inner_fold:02d}"
+                    ),
+                    "outer_fold": outer_fold,
+                    "inner_fold": inner_fold,
+                    "outer_development_subjects": (
+                        development_subjects
+                    ),
+                    "train_subjects": (
+                        train_subjects
+                    ),
+                    "validation_subjects": (
+                        validation_subjects
+                    ),
+                    "test_subjects": (
+                        test_subjects
+                    ),
+                }
+            )
+
+    return {
+        "schema_version": "1.0.0",
+        "row_count": 80,
+        "subject_count": 8,
+        "subjects": subjects,
+        "outer_fold_count": 2,
+        "inner_fold_count_per_outer": 2,
+        "total_split_count": 4,
+        "group_column": "subject_id",
+        "target_column": (
+            "sleep_stage_encoded"
+        ),
+        "target_name_column": (
+            "sleep_stage"
+        ),
+        "class_mapping": dict(
+            CLASS_MAPPING
+        ),
+        "source": {
+            "model_input_sha256": (
+                "data-hash"
+            ),
+            "protocol_sha256": (
+                "protocol-hash"
+            ),
+        },
+        "splits": splits,
+    }
+
+
 def tiny_registry() -> dict:
     return {
         "random_seed": 42,
@@ -403,6 +505,74 @@ class Phase3InnerSearchTests(
                 )
             )
         )
+
+    def test_manifest_supports_grouped_subject_folds(
+        self,
+    ) -> None:
+        bundle = synthetic_bundle()
+
+        bundle.groups = np.repeat(
+            np.arange(8),
+            10,
+        )
+
+        grouped = (
+            inner_search
+            .validate_local_split_manifest(
+                manifest=(
+                    synthetic_grouped_manifest()
+                ),
+                bundle=bundle,
+            )
+        )
+
+        self.assertEqual(
+            list(grouped),
+            [1, 2],
+        )
+
+        self.assertTrue(
+            all(
+                len(split["validation_subjects"])
+                == 2
+                and len(split["test_subjects"])
+                == 4
+                for splits in grouped.values()
+                for split in splits
+            )
+        )
+
+    def test_grouped_validation_rotation_is_enforced(
+        self,
+    ) -> None:
+        bundle = synthetic_bundle()
+
+        bundle.groups = np.repeat(
+            np.arange(8),
+            10,
+        )
+
+        invalid = synthetic_grouped_manifest()
+
+        invalid["splits"][1][
+            "validation_subjects"
+        ] = [4, 5]
+
+        invalid["splits"][1][
+            "train_subjects"
+        ] = [6, 7]
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "rotate every development subject",
+        ):
+            (
+                inner_search
+                .validate_local_split_manifest(
+                    manifest=invalid,
+                    bundle=bundle,
+                )
+            )
 
     def test_manifest_hash_mismatch_is_rejected(
         self,

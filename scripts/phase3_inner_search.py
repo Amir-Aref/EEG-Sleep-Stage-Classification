@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import sys
 from pathlib import Path
@@ -336,15 +337,21 @@ def validate_local_split_manifest(
             )
         )
 
-        if len(validation_subjects) != 1:
+        if not train_subjects:
             raise ValueError(
-                f"{split_id} must contain exactly "
+                f"{split_id} must contain at least "
+                "one training subject."
+            )
+
+        if not validation_subjects:
+            raise ValueError(
+                f"{split_id} must contain at least "
                 "one validation subject."
             )
 
-        if len(test_subjects) != 1:
+        if not test_subjects:
             raise ValueError(
-                f"{split_id} must contain exactly "
+                f"{split_id} must contain at least "
                 "one test subject."
             )
 
@@ -410,6 +417,10 @@ def validate_local_split_manifest(
             "Unexpected number of outer folds."
         )
 
+    outer_test_subject_counts: Counter[Any] = (
+        Counter()
+    )
+
     for outer_fold, outer_splits in grouped.items():
         outer_splits.sort(
             key=lambda split: split[
@@ -454,8 +465,12 @@ def validate_local_split_manifest(
         if len(test_subject_sets) != 1:
             raise ValueError(
                 f"Outer fold {outer_fold} changes "
-                "its test subject."
+                "its test subject partition."
             )
+
+        outer_test_subject_counts.update(
+            next(iter(test_subject_sets))
+        )
 
         development_sets = {
             tuple(
@@ -479,22 +494,46 @@ def validate_local_split_manifest(
             next(iter(development_sets))
         )
 
-        validation_subjects = [
-            normalize_subject_list(
-                split["validation_subjects"],
-                "validation subjects",
-            )[0]
-            for split in outer_splits
-        ]
+        validation_subject_counts: Counter[Any] = (
+            Counter()
+        )
 
-        if set(validation_subjects) != (
-            development_subjects
+        for split in outer_splits:
+            validation_subject_counts.update(
+                normalize_subject_list(
+                    split["validation_subjects"],
+                    "validation subjects",
+                )
+            )
+
+        if (
+            set(validation_subject_counts)
+            != development_subjects
+            or any(
+                count != 1
+                for count
+                in validation_subject_counts.values()
+            )
         ):
             raise ValueError(
                 f"Outer fold {outer_fold} does not "
                 "rotate every development subject "
-                "through validation."
+                "through validation exactly once."
             )
+
+    if (
+        set(outer_test_subject_counts)
+        != dataset_subjects
+        or any(
+            count != 1
+            for count
+            in outer_test_subject_counts.values()
+        )
+    ):
+        raise ValueError(
+            "Outer folds do not rotate every dataset "
+            "subject through testing exactly once."
+        )
 
     return dict(
         sorted(grouped.items())
