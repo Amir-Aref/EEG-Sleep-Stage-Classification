@@ -1,227 +1,151 @@
-# EEG Sleep Stage Classification â€” Completion Checklist
+# EEG Sleep Stage Classification - Completion Checklist
 
-> **Overall progress:** 95% complete
-> **Remaining:** 5%
-> **Current blocking task:** Final Git review and commit of MLflow infrastructure
-> **Current Kaggle status:** Running as Version #1
+> **Overall progress:** 97.5% complete
+>
+> **Remaining:** 2.5%
+>
+> **Current blocking tasks:** final clean-clone and Docker audit,
+> submission ZIP, PowerPoint, presentation video, and accessible video
+> link.
+>
+> **Current Kaggle status:** all full-dataset compute stages completed
+> and validated.
 
 ## Status Legend
 
 - `[ ]` Not started
 - `[-]` In progress
 - `[x]` Completed and validated
-- `[!]` Blocked or failed
+- `[!]` Blocked or intentionally unavailable
 
 ---
 
-## A. Repository Baseline and Organization
+## A. Repository and Data Pipeline
 
-- [x] Select `EEG-Sleep-Stage-Classification-integration` as the authoritative local worktree
-- [x] Confirm clean Git status before changes
-- [x] Fast-forward the worktree to commit `11c9ff4`
-- [x] Create a clean review ZIP without `.venv`, `.git`, caches, or raw EDF files
-- [x] Audit repository structure and file sizes
-- [x] Add this completion checklist
-- [x] Add the final report draft
-- [x] Remove the nested `_project_inventory.zip` from the reviewed project
+- [x] Select the integration worktree as the authoritative repository
+- [x] Complete the Phase 2 download, preprocessing, feature, EDA, and database pipeline
+- [x] Validate 78 subjects and 153 recordings
+- [x] Validate 195,469 thirty-second epochs
+- [x] Produce 28 leakage-safe model features
+- [x] Preserve subject identifiers throughout the pipeline
+- [x] Prevent random epoch-level splitting
+- [x] Add deterministic manifests and SHA-256 provenance
 
----
+## B. Full Nested Model Search
 
-## B. MLflow Infrastructure
+- [x] Run outer folds 1-3
+- [x] Validate the Batch 1 checkpoint
+- [x] Run outer folds 4-5
+- [x] Validate the Batch 2 checkpoint
+- [x] Evaluate all 29 configured candidates
+- [x] Complete all 15 inner validation folds
+- [x] Freeze one selected candidate per outer fold
+- [x] Confirm test metrics were not used during model selection
+- [x] Save complete search and selection artifacts
 
-- [x] Add `mlflow==3.14.0` to `requirements.txt`
-- [x] Add `config/mlflow_tracking.json`
-- [x] Use a local SQLite tracking backend
-- [x] Use a local MLflow artifact directory
-- [x] Separate `local_validation` and `full_dataset` scopes
-- [x] Enforce scientific-reporting safety tags
-- [x] Validate source artifact SHA-256 values
-- [x] Validate model SHA-256 values and file sizes
-- [x] Validate saved-model roundtrip flags
-- [x] Enforce saved-model runtime compatibility
-- [x] Add deterministic import fingerprints
-- [x] Add nested parent and child run organization
-- [x] Log parameters and evaluation metrics
-- [x] Log manifests, source artifacts, and saved joblib files
-- [x] Add sklearn model logging with signature and input example
-- [x] Register local-validation models separately
-- [x] Reserve the canonical registered model for full-dataset results
-- [x] Prevent a local model from receiving the `champion` alias
-- [x] Add a generic future full-dataset importer
-- [x] Add MLflow documentation
-- [x] Add MLflow configuration and contract tests
-- [ ] Install pinned dependencies in the user's `.venv`
-- [ ] Run the real SQLite/MLflow integration test locally
-- [ ] Import the local engineering artifacts into MLflow
-- [ ] Start the MLflow UI
-- [ ] Verify runs, artifacts, and registered versions in the UI
-- [ ] Capture MLflow UI screenshots
-- [ ] Preserve validated MLflow state for the final submission
+## C. Outer Test Evaluation
 
----
+- [x] Train the selected candidate for each outer fold
+- [x] Evaluate each subject exactly once in an unseen outer test fold
+- [x] Generate 195,469 outer-test predictions
+- [x] Save aligned probabilities for all five classes
+- [x] Calculate fold-level and pooled metrics
+- [x] Calculate per-class precision, recall, F1, and support
+- [x] Create raw and normalized pooled confusion matrices
+- [x] Confirm mean outer Macro-F1 of 0.658662
+- [x] Confirm pooled Macro-F1 of 0.661936
+- [x] Confirm pooled balanced accuracy of 0.670416
 
-## C. Full Nested Model Search
+## D. Final Refit and Saved Model
 
-- [-] Run Batch 1 for outer folds 1â€“3
-  - [ ] Kaggle Version #1 finishes with `Successful`
-  - [ ] Confirm `PHASE 3 SEARCH BATCH 1: PASS`
-  - [ ] Validate `eeg_phase3_search_batch1_checkpoint.tar.gz`
-  - [ ] Validate `eeg_phase3_search_batch1_checkpoint.json`
-  - [ ] Confirm completed outer folds are `[1, 2, 3]`
-  - [ ] Confirm `test_metrics_included=false`
+- [x] Select `random_forest__candidate_002` without outer-test leakage
+- [x] Refit the selected configuration on all 195,469 rows
+- [x] Save the final end-to-end sklearn pipeline
+- [x] Validate model file size and SHA-256
+- [x] Validate predictions after model reload
+- [x] Validate probabilities after model reload
+- [x] Validate the exact Python 3.12 training runtime
+- [x] Mark the final model deployment-ready
+- [x] Mark the final artifacts as eligible for scientific reporting
+- [!] Outer-fold fitted model files were not retained; complete
+  outer-fold metrics and predictions were retained instead
 
-- [ ] Run Batch 2 for outer folds 4â€“5
-  - [ ] Attach the Batch 1 output as a Notebook Input
-  - [ ] Validate the Batch 1 checkpoint before restore
-  - [ ] Run outer fold 4
-  - [ ] Run outer fold 5
-  - [ ] Persist a validated Batch 2 checkpoint
+## E. Prediction Pipeline and SQLite
 
-- [ ] Merge all five outer-fold search results
-  - [ ] Confirm 145 candidate summary rows
-  - [ ] Confirm 29 unique candidates
-  - [ ] Confirm five selected candidates
-  - [ ] Confirm candidate space is complete
-  - [ ] Confirm test data was not used during selection
-  - [ ] Save final selection JSON
-  - [ ] Save final selection CSV
+- [x] Run full inference with the final deployment model
+- [x] Generate predicted class and five class probabilities
+- [x] Generate confidence, margin, and entropy fields
+- [x] Preserve subject, recording, night, and epoch identifiers
+- [x] Save full predictions to CSV
+- [x] Save 195,469 predictions to SQLite
+- [x] Validate foreign-key enforcement
+- [x] Validate idempotent persistence
+- [x] Validate database row counts and integrity
+- [x] Record prediction-store provenance and checksums
 
----
+## F. MLflow
 
-## D. Outer Test Evaluation
+- [x] Configure MLflow 3.14.0 with a local SQLite backend
+- [x] Add local-validation and full-dataset safety scopes
+- [x] Import local engineering artifacts
+- [x] Import five full-dataset outer evaluation runs
+- [x] Import the final full-dataset refit run
+- [x] Log the final sklearn model with signature and input example
+- [x] Register `EEG_Sleep_Stage_Classifier`
+- [x] Register model version 1
+- [x] Assign the `champion` alias to the final deployment model
+- [x] Preserve a sanitized MLflow import summary
+- [x] Validate MLflow configuration and import contracts
+- [-] Capture final full-dataset MLflow UI screenshots for the presentation
 
-- [ ] Train the selected candidate for each outer fold on development subjects only
-- [ ] Evaluate each selected model once on unseen outer-test subjects
-- [ ] Save fold-level predictions
-- [ ] Save aligned probabilities for Wake, N1, N2, N3, and REM
-- [ ] Save confidence, probability margin, and normalized entropy
-- [ ] Calculate Macro-F1
-- [ ] Calculate balanced accuracy
-- [ ] Calculate weighted F1
-- [ ] Calculate accuracy
-- [ ] Calculate Cohen's kappa
-- [ ] Calculate multiclass log loss
-- [ ] Calculate per-class precision, recall, F1, and support
-- [ ] Create per-fold confusion matrices
-- [ ] Create the pooled confusion matrix
-- [ ] Calculate mean and standard deviation across outer folds
-- [ ] Confirm every subject appears in exactly one outer-test fold
+## G. Scientific Analysis
 
----
+- [x] Compare selected candidates across outer folds
+- [x] Analyze fold-level variability
+- [x] Analyze per-class precision, recall, and F1
+- [x] Identify N1 as the weakest class
+- [x] Rank frequent confusion pairs
+- [x] Produce final-model feature importance
+- [x] Create four final scientific figures
+- [x] Discuss class imbalance
+- [x] Discuss subject-level generalization
+- [x] Document scientific limitations
+- [x] State that the system is not a clinical diagnostic tool
+- [!] Cross-fold feature-stability analysis is unavailable because
+  outer-fold fitted models were not retained
 
-## E. Model Artifacts and Final Refit
+## H. Documentation
 
-- [ ] Train and save one complete pipeline for each outer fold
-- [ ] Save model metadata and SHA-256 checksums
-- [ ] Verify predictions after reloading every model
-- [ ] Verify probabilities after reloading every model
-- [ ] Create the full trained-model manifest
-- [ ] Select the final deployment configuration without test leakage
-- [ ] Run the full-dataset final refit
-- [ ] Save the final deployment model
-- [ ] Validate the final deployment model after reload
-- [ ] Mark final scientific-reporting and deployment flags correctly
+- [x] Add full-dataset search, evaluation, and final-refit artifacts
+- [x] Add the artifact provenance manifest
+- [x] Add the final scientific Markdown report
+- [x] Add the machine-readable scientific summary
+- [x] Add feature-importance and confusion-pair tables
+- [x] Add scientific figures
+- [x] Document MLflow tracking and registry behavior
+- [x] Document the database schema and SQL queries
+- [x] Update README with final scientific results
+- [x] Update this checklist to the completed project state
+- [ ] Perform the final delivery-language and link review
 
----
+## I. Validation and Delivery
 
-## F. Prediction Pipeline and Database
-
-- [ ] Run inference using the saved full-dataset deployment model
-- [ ] Generate predicted class and five class probabilities
-- [ ] Generate confidence, margin, and entropy fields
-- [ ] Preserve subject, recording, and epoch identifiers
-- [ ] Save predictions to CSV
-- [ ] Save final predictions to SQLite
-- [ ] Validate database row counts
-- [ ] Validate key relationships and foreign-key enforcement
-- [ ] Confirm idempotent persistence behavior
-- [ ] Run analytical SQL queries
-- [ ] Export important query results
-
----
-
-## G. MLflow Full-Dataset Import
-
-- [ ] Import full selection artifacts with `scope=full_dataset`
-- [ ] Import outer-fold metrics and predictions
-- [ ] Log five full outer-fold models
-- [ ] Log the final full-dataset refit model
-- [ ] Register canonical model versions
-- [ ] Assign `champion` only to the validated deployment model
-- [ ] Verify full-data runs in the MLflow UI
-- [ ] Export `mlflow_tracking_summary.json`
-- [ ] Capture final experiment and registry screenshots
-
----
-
-## H. Scientific Analysis
-
-- [ ] Compare all model families
-- [ ] Compare selected candidates across outer folds
-- [ ] Analyze per-class precision, recall, and F1
-- [ ] Analyze frequent stage confusions
-- [ ] Analyze N1 performance carefully
-- [ ] Produce feature-importance analysis
-- [ ] Identify stable and unstable features across folds
-- [ ] Discuss class imbalance
-- [ ] Discuss subject-level generalization
-- [ ] Document scientific limitations
-- [ ] State clearly that the system is not a medical diagnostic tool
-
----
-
-## I. Final Report and Documentation
-
-- [x] Create an English final-report structure
-- [x] Document dataset size and class distribution
-- [x] Document feature engineering and leakage prevention
-- [x] Document nested evaluation design
-- [x] Document the MLflow architecture and safety scopes
-- [x] Rewrite `README.md` for the complete project
-- [x] Add commands for validation, tracking, UI, and future full import
-- [x] Add repository audit and ZIP change log
-- [x] Complete Phase 2 and Phase 3 database documentation
-- [x] Generate validated local Phase 3 SQL query outputs
-- [ ] Insert final model-selection results
-- [ ] Insert final outer-test metrics
-- [ ] Insert confusion matrices
-- [ ] Insert feature-importance results
-- [ ] Insert error analysis
-- [ ] Insert final database results
-- [ ] Insert MLflow screenshots
-- [ ] Write the final conclusion
-- [ ] Regenerate `README.docx` and `README.pdf` after final results
-- [ ] Perform final language and formatting review
-
----
-
-## J. Repository and Delivery Audit
-
-- [x] Add `.dockerignore`
-- [x] Align Docker Python major/minor with saved-model runtime
-- [x] Run the container as a non-root user
-- [x] Update CI to validate MLflow configuration and artifacts
-- [x] Add MLflow dependency import to CI
-- [x] Add generated MLflow state to `.gitignore`
-- [x] Compile all current Python sources
-- [x] Run the available complete test suite in the review environment â€” 177 tests, 1 skipped
-- [ ] Resolve dependencies in the user's pinned local environment
-- [ ] Run all tests with MLflow installed
-- [ ] Build the updated Docker image
-- [ ] Run the updated Docker image
-- [ ] Confirm GitHub Actions success after push
+- [x] Run 183 full-project tests locally
+- [x] Pass GitHub Actions for the result and reporting pull requests
+- [x] Validate committed files with `git diff --check`
+- [x] Keep large model, prediction, input, and SQLite files outside Git
+- [x] Record all external artifact sizes and SHA-256 values
+- [ ] Build the final Docker image
+- [ ] Run and smoke-test the final Docker image
+- [ ] Validate a clean repository clone
 - [ ] Review the final Git diff
-- [x] Remove ZIP-review caches, empty duplicate screenshots, and empty duplicate SQL outputs
-- [ ] Remove remaining temporary files created during final local validation
-- [ ] Create the final Git commit
-- [ ] Create the final submission ZIP
+- [ ] Remove temporary local validation resources
+- [ ] Create and validate the final submission ZIP
 
----
-
-## K. Presentation and Video
+## J. Presentation and Video
 
 - [ ] Create the final PowerPoint
-- [ ] Prepare a maximum 15-minute presentation script
+- [ ] Prepare a presentation script of at most 15 minutes
 - [ ] Explain the dataset and prediction target
 - [ ] Explain preprocessing and feature engineering
 - [ ] Explain subject-safe nested evaluation
@@ -229,33 +153,30 @@
 - [ ] Demonstrate the MLflow UI
 - [ ] Demonstrate saved-model inference
 - [ ] Demonstrate SQLite prediction storage
-- [ ] Discuss limitations and real-world meaning
+- [ ] Discuss limitations and real-world interpretation
 - [ ] Record the final video
 - [ ] Upload the video to Google Drive
 - [ ] Add the accessible link to `video_link.txt` or README
 
----
-
 ## Final Acceptance Gate
 
-- [ ] All required Phase 3 artifacts exist
-- [ ] Every checkpoint and model has a validated checksum
-- [ ] No test leakage occurred
-- [ ] Final predictions exist in SQLite
-- [ ] MLflow tracking and registry artifacts are included
-- [ ] Documentation is complete
-- [ ] Docker and CI checks pass
+- [x] Required Phase 3 scientific artifacts exist
+- [x] Checkpoints and final model have validated checksums
+- [x] No outer-test leakage occurred
+- [x] Final predictions exist in SQLite
+- [x] MLflow tracking and registry import succeeded
+- [x] Scientific documentation is complete
+- [ ] Docker and clean-clone checks pass
 - [ ] Presentation and video are complete
 - [ ] Final ZIP opens and contains every required deliverable
-
----
 
 ## Progress Log
 
 | Date | Task | Status | Evidence |
 |---|---|---|---|
-| 2026-07-27 | Repository synchronization | Completed | Commit `11c9ff4` |
-| 2026-07-27 | Clean project ZIP | Completed | 25.85 MB review archive |
-| 2026-07-27 | MLflow infrastructure and static validation | Completed | Config, importer, tests, docs |
-| 2026-07-27 | Review ZIP quality audit | Completed | 177 tests; SQLite and structured-file checks pass |
-| 2026-07-27 | Phase 3 Search Batch 1 â€” Folds 1â€“3 | In progress | Kaggle Version #1 |
+| 2026-07-27 | Repository and MLflow infrastructure review | Completed | PR #5 |
+| 2026-07-28 | Grouped full-dataset split support | Completed | PR #6 |
+| 2026-07-29 | Metrics-only full-dataset MLflow support | Completed | PR #7 |
+| 2026-07-30 | Full-dataset artifacts and provenance | Completed | PR #8 |
+| 2026-07-30 | Final scientific report and figures | Completed | PR #9 |
+| 2026-07-30 | Full project local test suite | Completed | 183 tests passed |

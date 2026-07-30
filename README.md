@@ -14,9 +14,10 @@ The project uses the Sleep-EDF Database Expanded sleep-cassette subset and enfor
 
 ## Current Project Status
 
-The complete Phase 2 data pipeline and the Phase 3 engineering implementation are available in the repository. Full-dataset nested model search is being executed on Kaggle in checkpointed batches.
+The complete Phase 2 data pipeline and the complete Phase 3
+full-dataset scientific evaluation are available.
 
-Validated full-dataset preparation:
+Validated full-dataset scope:
 
 - 78 subjects
 - 153 recordings
@@ -26,9 +27,31 @@ Validated full-dataset preparation:
 - 5 outer folds and 3 inner folds per outer fold
 - 29 model candidates
 
-The local Phase 3 artifacts included in this repository use four subjects for engineering validation only. Their metrics must not be reported as final scientific results. Machine-readable artifacts explicitly include `scientific_reporting_allowed=false`.
+Final scientific results:
 
-Project progress is tracked in [`PROJECT_COMPLETION_CHECKLIST.md`](PROJECT_COMPLETION_CHECKLIST.md).
+- Mean outer Macro-F1: **0.658662**
+- Outer Macro-F1 standard deviation: **0.011977**
+- Pooled Macro-F1: **0.661936**
+- Pooled balanced accuracy: **0.670416**
+- Final model: `random_forest__candidate_002`
+
+The final model was imported into MLflow as
+`EEG_Sleep_Stage_Classifier`, registered as version `1`, and assigned
+the `champion` alias.
+
+Scientific outputs are available in:
+
+- [`reports/phase3_full_scientific_report.md`](reports/phase3_full_scientific_report.md)
+- [`reports/phase3_full_scientific_summary.json`](reports/phase3_full_scientific_summary.json)
+- [`docs/figures/phase3_full/`](docs/figures/phase3_full/)
+- [`data/metadata/phase3_full_artifact_provenance.json`](data/metadata/phase3_full_artifact_provenance.json)
+
+The large final model, processed model input, row-level prediction
+files, and prediction SQLite database remain outside Git. Their file
+sizes and SHA-256 values are recorded in the provenance manifest.
+
+The small local Phase 3 artifacts remain engineering-validation
+artifacts only and must not be presented as final scientific results.
 
 ## Evaluation Design
 
@@ -81,7 +104,10 @@ The complete registry contains 29 candidates. See [`config/phase3_model_registry
 
 ## Environment
 
-The saved local Phase 3 models were produced with:
+The repository development and test environment uses the versions
+pinned in `requirements.txt`.
+
+The retained local engineering models were produced with:
 
 - Python 3.13.x
 - NumPy 2.5.1
@@ -89,11 +115,20 @@ The saved local Phase 3 models were produced with:
 - scikit-learn 1.9.0
 - joblib 1.5.3
 
-The delivery environment pins **pandas 2.3.3** because MLflow 3.14 requires
-`pandas<3`. pandas is retained in model provenance, but the artifact loader
-strictly gates Python major/minor, scikit-learn, NumPy, and joblib because the
-saved objects are scikit-learn pipelines. Trusted joblib artifacts must still
-be loaded only from this project.
+The final full-dataset deployment model was trained with:
+
+- Python 3.12.x
+- NumPy 2.0.2
+- pandas 2.3.3
+- scikit-learn 1.6.1
+- joblib 1.5.3
+
+The full-dataset model must be loaded in a compatible Python 3.12
+environment with its recorded package versions. Trusted joblib files
+must only be loaded from validated project artifacts.
+
+MLflow 3.14.0 uses `pandas<3`, so the MLflow-compatible environment
+pins pandas 2.3.3.
 
 ### Windows PowerShell
 
@@ -210,21 +245,27 @@ Run the printed command and open `http://127.0.0.1:5000`.
 
 Detailed instructions are available in [`docs/mlflow_tracking.md`](docs/mlflow_tracking.md).
 
-## Importing Future Full-Dataset Results
+## Importing the Completed Full-Dataset Results
 
-After the full nested search, outer evaluation, and final refit are complete, use the generic importer:
+The completed full-dataset artifacts can be imported with:
 
 ```bash
 python scripts/mlflow_tracking.py import-phase3 \
   --scope full_dataset \
-  --selection data/metadata/phase3_full_inner_search_results.json \
+  --selection data/metadata/phase3_full_inner_model_selection.json \
   --outer-evaluation data/metadata/phase3_full_outer_evaluation.json \
-  --model-manifest data/metadata/phase3_full_trained_model_manifest.json \
   --final-refit-manifest data/metadata/phase3_full_final_refit_manifest.json \
   --git-commit <commit-sha>
 ```
 
-Full-dataset model registration is blocked unless the artifacts explicitly permit scientific reporting and the final model is deployment-ready.
+The five outer folds are imported as evaluation-only child runs because
+their fitted model files were intentionally not retained. The validated
+final refit pipeline is the only full-dataset model registered in the
+canonical MLflow Model Registry.
+
+The import validates source hashes, final-model size and SHA-256,
+scientific-reporting permission, deployment readiness, and the saved
+model runtime before registration.
 
 ## Prediction and SQLite Storage
 
@@ -261,7 +302,7 @@ The image uses Python 3.13 to match the major/minor runtime of the included save
 - Joblib files must only be loaded from trusted project artifacts.
 - Local engineering results are separated from final full-dataset results.
 - The importer does not rerun training or access new held-out data.
-- Full scientific reporting remains blocked until the complete outer evaluation is validated.
+- Full scientific reporting is enabled only for the validated complete outer evaluation and final refit artifacts.
 
 ## Documentation
 
